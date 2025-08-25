@@ -1,0 +1,26 @@
+# Test project with executable targets
+name: test-project
+
+targets:
+  main-app:
+    build:
+      type: executable
+      sources:
+        c:
+          - main.c
+          - utils.c
+      includes:
+        - include
+      defines:
+        - DEBUG=1
+      flags:
+        c: -Wall -O2
+  
+  test-runner:
+    build:
+      type: exe
+      sources:
+        c:
+          - test.c
+      flags:
+        c: -Wall -g

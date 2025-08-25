@@ -1,0 +1,48 @@
+# Test project with library targets (same project name)
+name: test-project
+
+targets:
+  math-lib:
+    build:
+      type: shared_library
+      sources:
+        c:
+          - math.c
+          - advanced_math.c
+      includes:
+        - include
+      defines:
+        - EXPORT_DLL
+      flags:
+        c: -fPIC -Wall
+  
+  utils-lib:
+    build:
+      type: dll
+      sources:
+        c:
+          - utils.c
+          - helpers.c
+      flags:
+        c: -fPIC -O2
+  
+  core-lib:
+    build:
+      type: static_library
+      sources:
+        c:
+          - core.c
+          - base.c
+      includes:
+        - include
+      flags:
+        c: -Wall -O3
+  
+  archive-lib:
+    build:
+      type: sll
+      sources:
+        c:
+          - archive.c
+      flags:
+        c: -Wall

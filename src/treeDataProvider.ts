@@ -104,13 +104,84 @@ export class BuildFileItem extends CatboyItem {
     }
 }
 
+export function getTargetTypeDisplayName(targetType?: string): string {
+    if (!targetType) {
+        return '';
+    }
+    
+    switch (targetType.toLowerCase()) {
+        case 'exe':
+        case 'executable':
+            return 'Executable';
+        case 'dll':
+        case 'shared_library':
+            return 'Dynamic Link Library';
+        case 'sll':
+        case 'static_library':
+        case 'static_linked_library':
+            return 'Static Link Library';
+        case 'obj':
+        case 'object_files':
+            return 'Object Files';
+        case 'luna':
+        case 'luna_bsp':
+            return 'Luna BSP';
+        default:
+            return targetType; // Return original type if unknown
+    }
+}
+
+export function getIconForTargetType(targetType?: string): vscode.ThemeIcon {
+    if (!targetType) {
+        return new vscode.ThemeIcon('symbol-method');
+    }
+    
+    switch (targetType.toLowerCase()) {
+        case 'exe':
+        case 'executable':
+            return new vscode.ThemeIcon('gear'); // Gear icon for executables
+        
+        case 'dll':
+        case 'shared_library':
+            return new vscode.ThemeIcon('library'); // Library/book icon for shared libraries
+        
+        case 'sll':
+        case 'static_library':
+        case 'static_linked_library':
+            return new vscode.ThemeIcon('archive'); // Archive/box icon for static libraries
+        
+        case 'obj':
+        case 'object_files':
+            return new vscode.ThemeIcon('file-binary'); // Binary file icon for object files
+        
+        case 'luna':
+        case 'luna_bsp':
+            return new vscode.ThemeIcon('star-full'); // Star icon (closest to moon in default icons)
+        
+        default:
+            return new vscode.ThemeIcon('symbol-method'); // Default icon for unknown types
+    }
+}
+
 export class TargetItem extends CatboyItem {
     constructor(
         public readonly target: CatboyTarget
     ) {
         super(target.name, vscode.TreeItemCollapsibleState.None);
-        this.tooltip = `Target: ${target.name}\nProject: ${target.projectName}\nConfig: ${target.yamlPath}`;
+        
+        // Add dimmed target type text (similar to build.yaml filename)
+        const displayTypeName = getTargetTypeDisplayName(target.targetType);
+        if (displayTypeName) {
+            this.description = displayTypeName;
+        }
+        
+        // Set tooltip with target type info
+        const typeInfo = target.targetType ? `\nType: ${target.targetType}` : '';
+        this.tooltip = `Target: ${target.name}\nProject: ${target.projectName}${typeInfo}\nConfig: ${target.yamlPath}`;
         this.contextValue = 'target';
-        this.iconPath = new vscode.ThemeIcon('symbol-method');
+        
+        // Select icon based on target type
+        this.iconPath = getIconForTargetType(target.targetType);
     }
+    
 }

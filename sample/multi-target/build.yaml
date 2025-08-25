@@ -1,0 +1,82 @@
+# Test project with all target types in one file (same project name)
+name: test-project
+
+targets:
+  application:
+    build:
+      type: executable
+      sources:
+        c:
+          - src/main.c
+          - src/app.c
+      includes:
+        - include
+      links:
+        - pthread
+      flags:
+        c: -Wall -O2
+  
+  shared-component:
+    build:
+      type: shared_library
+      sources:
+        c:
+          - src/component.c
+          - src/interface.c
+      defines:
+        - BUILD_DLL
+      flags:
+        c: -fPIC -shared
+  
+  static-core:
+    build:
+      type: static_linked_library
+      sources:
+        c:
+          - src/core.c
+          - src/foundation.c
+      flags:
+        c: -Wall -O3
+  
+  kernel-driver:
+    build:
+      type: luna_bsp
+      sources:
+        c:
+          - src/driver.c
+          - src/kernel_api.c
+      defines:
+        - KERNEL_MODE
+      flags:
+        c: -nostdlib -ffreestanding
+  
+  object-bundle:
+    build:
+      type: object_files
+      sources:
+        c:
+          - src/module1.c
+          - src/module2.c
+          - src/module3.c
+      flags:
+        c: -c -fno-builtin
+  
+  test-exe:
+    build:
+      type: exe
+      sources:
+        c:
+          - test/test_main.c
+      links:
+        - static-core
+      flags:
+        c: -g -DDEBUG
+  
+  plugin-dll:
+    build:
+      type: dll
+      sources:
+        c:
+          - src/plugin.c
+      flags:
+        c: -fPIC -Wall

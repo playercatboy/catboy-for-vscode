@@ -81,6 +81,14 @@ None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
 
+### 0.1.5
+
+Target type visualization and improved UX:
+- **Target type-based icons**: Different icons for executables, libraries, object files, and Luna BSP targets
+- **Target type labels**: Dimmed type descriptions (e.g., "Executable", "Dynamic Link Library") shown after target names
+- **Enhanced target selection**: Dropdown shows type-specific icons and information
+- **Consistent icon colors**: All target icons use neutral/white coloring for visual consistency
+
 ### 0.1.4
 
 Enhanced tree view and build management:

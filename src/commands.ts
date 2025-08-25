@@ -1,9 +1,36 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { CatboyTreeDataProvider, TargetItem, BuildFileItem } from './treeDataProvider';
+import { CatboyTreeDataProvider, TargetItem, BuildFileItem, getIconForTargetType } from './treeDataProvider';
 import { ProjectDiscovery, CatboyTarget, CatboyProject, CatboyBuildFile } from './projectDiscovery';
 import { CatboyStatusBar } from './statusBar';
 import { TerminalManager } from './terminalManager';
+
+function getIconNameForTargetType(targetType?: string): string {
+    if (!targetType) {
+        return 'symbol-method';
+    }
+    
+    switch (targetType.toLowerCase()) {
+        case 'exe':
+        case 'executable':
+            return 'gear'; // Gear icon for executables
+        case 'dll':
+        case 'shared_library':
+            return 'library'; // Library/book icon for shared libraries
+        case 'sll':
+        case 'static_library':
+        case 'static_linked_library':
+            return 'archive'; // Archive/box icon for static libraries
+        case 'obj':
+        case 'object_files':
+            return 'file-binary'; // Binary file icon for object files
+        case 'luna':
+        case 'luna_bsp':
+            return 'star-full'; // Star icon for Luna BSP
+        default:
+            return 'symbol-method'; // Default icon for unknown types
+    }
+}
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -58,9 +85,11 @@ export function registerCommands(
 
             for (const project of projects) {
                 for (const target of project.targets) {
+                    const iconName = getIconNameForTargetType(target.targetType);
+                    const typeInfo = target.targetType ? ` (${target.targetType})` : '';
                     items.push({
-                        label: `$(symbol-method) ${target.name}`,
-                        description: project.name,
+                        label: `$(${iconName}) ${target.name}`,
+                        description: `${project.name}${typeInfo}`,
                         detail: vscode.workspace.asRelativePath(target.yamlPath)
                     });
                 }
@@ -77,8 +106,10 @@ export function registerCommands(
             });
 
             if (selected) {
-                const targetName = selected.label.replace('$(symbol-method) ', '');
-                const projectName = selected.description!;
+                // Extract target name by removing icon prefix (e.g., "$(symbol-method) target-name" -> "target-name")
+                const targetName = selected.label.replace(/^\$\([^)]+\) /, '');
+                // Extract project name by removing type info (e.g., "project-name (executable)" -> "project-name")
+                const projectName = selected.description!.replace(/ \([^)]+\)$/, '');
                 
                 for (const project of projects) {
                     if (project.name === projectName) {

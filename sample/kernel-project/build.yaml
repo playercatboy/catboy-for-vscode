@@ -1,0 +1,52 @@
+# Test project with kernel and object file targets (same project name)
+name: test-project
+
+targets:
+  kernel-bsp:
+    build:
+      type: luna_bsp
+      sources:
+        c:
+          - kernel_main.c
+          - drivers/uart.c
+          - drivers/timer.c
+      includes:
+        - include
+        - arch/x86
+      defines:
+        - KERNEL_MODE
+        - LUNA_BSP
+      flags:
+        c: -nostdlib -ffreestanding -mno-red-zone
+  
+  luna-module:
+    build:
+      type: luna
+      sources:
+        c:
+          - module.c
+          - module_init.c
+      flags:
+        c: -fno-stack-protector
+  
+  boot-objects:
+    build:
+      type: object_files
+      sources:
+        c:
+          - boot.c
+          - startup.c
+      flags:
+        c: -m32 -nostdlib
+  
+  driver-objs:
+    build:
+      type: obj
+      sources:
+        c:
+          - driver.c
+          - hw_interface.c
+      includes:
+        - include/drivers
+      flags:
+        c: -Wall -c

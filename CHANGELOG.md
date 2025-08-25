@@ -2,6 +2,23 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
+## [0.1.5] - 2025-08-26
+
+### Added
+- **Target Type-Based Icons**: Different icons for each target type (executable, libraries, object files, Luna BSP)
+- **Target Type Display**: Dimmed target type text shown after target names in tree view for easy identification
+- **Enhanced Target Selection**: Target selection dropdown now shows type-specific icons and type information
+- **Test Projects**: Added comprehensive test projects with different target types for development
+
+### Changed
+- **Icon Consistency**: All target icons now use consistent white/neutral coloring (executable uses gear icon)
+- **User-Friendly Type Names**: Raw YAML types converted to readable names (e.g., "exe" → "Executable")
+- **Target Tooltips**: Enhanced tooltips with target type information
+
+### Technical
+- **Icon Mapping**: exe/executable → gear, dll/shared_library → library, sll/static_library → archive, obj/object_files → file-binary, luna/luna_bsp → star-full
+- **Type Parsing**: Extract target type from `targets/<name>/build/type` in YAML configuration
+
 ## [0.1.4] - 2025-08-26
 
 ### Added

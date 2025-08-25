@@ -7,6 +7,7 @@ export interface CatboyTarget {
     name: string;
     projectName: string;
     yamlPath: string;
+    targetType?: string; // exe, dll, sll, obj, luna, etc.
 }
 
 export interface CatboyBuildFile {
@@ -170,11 +171,22 @@ export class ProjectDiscovery {
                         continue;
                     }
 
+                    // Extract target type from targets/<targetName>/build/type
+                    let targetType: string | undefined;
+                    const targetConfig = parsed.targets[targetName];
+                    if (targetConfig && typeof targetConfig === 'object') {
+                        const buildConfig = targetConfig.build;
+                        if (buildConfig && typeof buildConfig === 'object') {
+                            targetType = buildConfig.type;
+                        }
+                    }
+                    
                     // Create target
                     const target: CatboyTarget = {
                         name: targetName,
                         projectName: projectName,
-                        yamlPath: yamlPath
+                        yamlPath: yamlPath,
+                        targetType: targetType
                     };
                     
                     // Add to both project targets (for compatibility) and build file targets
