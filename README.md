@@ -8,6 +8,10 @@ A Visual Studio Code extension that provides build system integration for the Ca
 - **Tree View Interface**: Displays all projects and their targets in a hierarchical tree view
 - **Build Actions**: Quick access buttons for build, clean, and rebuild operations
 - **Terminal Integration**: Executes Catboy commands directly in the VS Code integrated terminal
+- **Status Bar Integration**: Shows current target and build progress in the status bar
+- **Error Handling**: Comprehensive validation and error reporting for build.yaml files
+- **Command Palette**: Quick target selection and output viewing via command palette
+- **Smart Terminal Management**: Reuses terminals per target for better organization
 
 ## Requirements
 
@@ -57,6 +61,13 @@ Each target in the tree view provides three action buttons:
 - **Build** (⚙️): Executes `catboy build -v -f <yaml-file>`
 - **Clean** (🗑️): Executes `catboy clean -v -f <yaml-file>`
 - **Rebuild** (🔄): Executes `catboy rebuild -v -f <yaml-file>`
+
+### Additional Features
+
+- **Status Bar**: Shows the currently selected target and build progress
+- **Command Palette**: Access `Catboy: Select Target` and `Catboy: Show Output` commands
+- **Output Channel**: View detailed logs and error messages in the "Catboy" output channel
+- **Auto-refresh**: Automatically detects changes to build.yaml files and refreshes the view
 
 ## Extension Settings
 
@@ -113,10 +124,43 @@ npm run compile
 
 ### Testing
 
+#### Development Testing
+
+1. **Run the extension in development mode:**
+   ```bash
+   # Open the project in VSCode
+   code .
+   
+   # Press F5 to launch Extension Development Host
+   # This opens a new VSCode window with the extension loaded
+   ```
+
+2. **Test with sample project:**
+   - In the Extension Development Host, open the `sample/` folder
+   - Look for the Catboy icon in the Activity Bar
+   - Verify projects and targets appear in the tree view
+
+3. **Test mock Catboy (optional):**
+   - Configure executable path in settings to point to `sample/mock-catboy.bat` (Windows) or `sample/mock-catboy.sh` (Unix/Mac)
+   - Test build commands without installing actual Catboy
+
+#### Automated Tests
+
 Run the test suite:
 ```bash
 npm test
 ```
+
+#### Manual Testing Checklist
+
+- [ ] Extension icon appears in Activity Bar
+- [ ] Tree view shows projects and targets from build.yaml files
+- [ ] Build/Clean/Rebuild buttons execute commands in terminal
+- [ ] Status bar shows selected target
+- [ ] Command palette commands work (Ctrl+Shift+P → "Catboy")
+- [ ] Output channel shows project discovery logs
+- [ ] File changes trigger automatic refresh
+- [ ] Error handling displays warnings for invalid YAML files
 
 ### Building for Production
 

@@ -1,0 +1,14 @@
+# Rename this to build.yaml to test error handling
+
+# Missing name property
+targets:
+  test:
+    build:
+      type: executable
+
+---
+
+# Invalid YAML syntax
+name: broken
+targets
+  test: {}
