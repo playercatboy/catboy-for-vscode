@@ -29,6 +29,7 @@ export class ProjectDiscovery {
     }
 
     async discoverProjects(): Promise<CatboyProject[]> {
+        // Clear all existing projects and errors for a fresh scan
         this.projects.clear();
         this.parseErrors = [];
         
@@ -51,7 +52,16 @@ export class ProjectDiscovery {
         const targetCount = Array.from(this.projects.values()).reduce((sum, p) => sum + p.targets.length, 0);
         this.outputChannel.appendLine(`Found ${projectCount} project(s) with ${targetCount} target(s)`);
 
-        return Array.from(this.projects.values());
+        // Sort projects alphabetically and sort targets within each project
+        const sortedProjects = Array.from(this.projects.values())
+            .sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Sort targets within each project
+        sortedProjects.forEach(project => {
+            project.targets.sort((a, b) => a.name.localeCompare(b.name));
+        });
+
+        return sortedProjects;
     }
 
     private async scanFolder(folderPath: string): Promise<void> {
@@ -117,15 +127,22 @@ export class ProjectDiscovery {
 
             if (parsed.targets && typeof parsed.targets === 'object') {
                 for (const targetName of Object.keys(parsed.targets)) {
-                    const existingTarget = project.targets.find(t => t.name === targetName && t.yamlPath !== yamlPath);
+                    // Check if this project+target combination already exists
+                    const existingTarget = project.targets.find(t => t.name === targetName);
+                    
                     if (existingTarget) {
-                        this.parseErrors.push({
-                            file: relativePath,
-                            message: `Duplicate target "${targetName}" in project "${projectName}" (also defined in ${vscode.workspace.asRelativePath(existingTarget.yamlPath)})`
-                        });
+                        // Only report error if it's from a different YAML file
+                        if (existingTarget.yamlPath !== yamlPath) {
+                            this.parseErrors.push({
+                                file: relativePath,
+                                message: `Duplicate target "${targetName}" in project "${projectName}" (also defined in ${vscode.workspace.asRelativePath(existingTarget.yamlPath)})`
+                            });
+                        }
+                        // Skip adding duplicate (whether from same or different file)
                         continue;
                     }
 
+                    // Add the new target
                     project.targets.push({
                         name: targetName,
                         projectName: projectName,

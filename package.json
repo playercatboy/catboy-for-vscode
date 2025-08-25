@@ -2,7 +2,7 @@
   "name": "catboy-for-vscode",
   "displayName": "Catboy Build System",
   "description": "Build system integration for Catboy C build system",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "playercatboy",
   "engines": {
     "vscode": "^1.74.0"

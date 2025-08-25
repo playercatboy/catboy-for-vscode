@@ -81,6 +81,13 @@ None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
 
+### 0.1.3
+
+Bug fixes and UI improvements:
+- **Fixed duplicate targets bug**: Resolved issue where targets would appear duplicated when refreshing
+- **Added alphabetical sorting**: Projects and targets now display in consistent alphabetical order
+- **Improved state management**: Better handling of project discovery during refresh operations
+
 ### 0.1.2
 
 Bug fixes and stability improvements:

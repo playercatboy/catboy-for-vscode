@@ -2,6 +2,18 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
+## [0.1.3] - 2024-12-25
+
+### Fixed
+- **Duplicate Targets Bug**: Fixed issue where targets would appear duplicated in the tree view when rapidly clicking refresh
+- **Project Discovery**: Improved project discovery logic to properly clear state before rescanning
+- **Tree View Consistency**: Added alphabetical sorting for projects and targets to maintain consistent ordering
+
+### Changed
+- **Sorting**: Projects and targets now display in alphabetical order for better organization
+- **Duplicate Detection**: Simplified and improved duplicate target detection logic
+- **State Management**: Better state management during project refresh operations
+
 ## [0.1.2] - 2024-12-25
 
 ### Fixed
