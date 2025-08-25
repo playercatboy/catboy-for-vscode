@@ -70,6 +70,7 @@ npm run lint
 - **src/commands.ts**: Command handlers for build/clean/rebuild operations with status integration
 - **src/statusBar.ts**: Status bar integration showing current target and build progress
 - **src/terminalManager.ts**: Smart terminal management with reuse per target
+- **src/yamlParser.ts**: Custom lightweight YAML parser for build.yaml files (zero dependencies)
 
 ### Extension Configuration
 
@@ -109,3 +110,13 @@ Run `npm test` for the complete test suite.
 ## Extension Status
 
 ✅ **Complete Implementation** - All core features and enhancements have been implemented and tested.
+
+### Version History
+- **v0.1.2**: Fixed critical production activation issues, replaced external YAML dependency
+- **v0.1.1**: Added status bar integration and enhanced user experience
+- **v0.1.0**: Initial release with core functionality
+
+### Technical Notes
+- Zero external runtime dependencies (custom YAML parser included)
+- Activates on `onStartupFinished` for immediate command availability
+- Comprehensive error handling and logging for production troubleshooting

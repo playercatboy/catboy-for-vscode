@@ -6,41 +6,53 @@ import { CatboyStatusBar } from './statusBar';
 import { TerminalManager } from './terminalManager';
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Catboy extension is now active');
+    try {
+        console.log('Catboy extension is activating...');
+        
+        const projectDiscovery = new ProjectDiscovery();
+        const treeDataProvider = new CatboyTreeDataProvider(projectDiscovery);
+        const statusBar = new CatboyStatusBar();
+        const terminalManager = new TerminalManager();
+        
+        console.log('Creating tree view...');
+        const treeView = vscode.window.createTreeView('catboyProjects', {
+            treeDataProvider: treeDataProvider,
+            showCollapseAll: true
+        });
 
-    const projectDiscovery = new ProjectDiscovery();
-    const treeDataProvider = new CatboyTreeDataProvider(projectDiscovery);
-    const statusBar = new CatboyStatusBar();
-    const terminalManager = new TerminalManager();
-    
-    const treeView = vscode.window.createTreeView('catboyProjects', {
-        treeDataProvider: treeDataProvider,
-        showCollapseAll: true
-    });
+        context.subscriptions.push(treeView);
+        context.subscriptions.push({
+            dispose: () => {
+                projectDiscovery.dispose();
+                statusBar.dispose();
+                terminalManager.dispose();
+            }
+        });
 
-    context.subscriptions.push(treeView);
-    context.subscriptions.push({
-        dispose: () => {
-            projectDiscovery.dispose();
-            statusBar.dispose();
-            terminalManager.dispose();
-        }
-    });
+        console.log('Registering commands...');
+        registerCommands(context, treeDataProvider, projectDiscovery, statusBar, terminalManager);
 
-    registerCommands(context, treeDataProvider, projectDiscovery, statusBar, terminalManager);
+        console.log('Setting up file watcher...');
+        const fileWatcher = vscode.workspace.createFileSystemWatcher('**/build.yaml', false, false, false);
+        fileWatcher.onDidCreate(() => treeDataProvider.refresh());
+        fileWatcher.onDidChange(() => treeDataProvider.refresh());
+        fileWatcher.onDidDelete(() => treeDataProvider.refresh());
+        context.subscriptions.push(fileWatcher);
 
-    const fileWatcher = vscode.workspace.createFileSystemWatcher('**/build.yaml', false, false, false);
-    fileWatcher.onDidCreate(() => treeDataProvider.refresh());
-    fileWatcher.onDidChange(() => treeDataProvider.refresh());
-    fileWatcher.onDidDelete(() => treeDataProvider.refresh());
-    context.subscriptions.push(fileWatcher);
+        const workspaceFolderDisposable = vscode.workspace.onDidChangeWorkspaceFolders(() => {
+            treeDataProvider.refresh();
+        });
+        context.subscriptions.push(workspaceFolderDisposable);
 
-    const workspaceFolderDisposable = vscode.workspace.onDidChangeWorkspaceFolders(() => {
+        console.log('Refreshing tree data...');
         treeDataProvider.refresh();
-    });
-    context.subscriptions.push(workspaceFolderDisposable);
-
-    treeDataProvider.refresh();
+        
+        console.log('Catboy extension activated successfully!');
+    } catch (error) {
+        console.error('Failed to activate Catboy extension:', error);
+        vscode.window.showErrorMessage(`Failed to activate Catboy extension: ${error}`);
+        throw error;
+    }
 }
 
 export function deactivate() {

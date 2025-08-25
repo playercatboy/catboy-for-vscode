@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as yaml from 'yaml';
+import { parseSimpleYaml } from './yamlParser';
 
 export interface CatboyTarget {
     name: string;
@@ -87,7 +87,7 @@ export class ProjectDiscovery {
                 return;
             }
 
-            const parsed = yaml.parse(content);
+            const parsed = parseSimpleYaml(content);
 
             if (!parsed || typeof parsed !== 'object') {
                 this.parseErrors.push({

@@ -2,7 +2,7 @@
   "name": "catboy-for-vscode",
   "displayName": "Catboy Build System",
   "description": "Build system integration for Catboy C build system",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "publisher": "playercatboy",
   "engines": {
     "vscode": "^1.74.0"
@@ -28,7 +28,7 @@
   },
   "main": "./out/extension.js",
   "activationEvents": [
-    "workspaceContains:**/build.yaml"
+    "onStartupFinished"
   ],
   "contributes": {
     "viewsContainers": {
@@ -45,7 +45,6 @@
         {
           "id": "catboyProjects",
           "name": "Projects",
-          "icon": "resources/catboy.svg",
           "contextualTitle": "Catboy Projects"
         }
       ]
@@ -139,8 +138,5 @@
     "glob": "^8.0.3",
     "mocha": "^10.1.0",
     "typescript": "^4.9.3"
-  },
-  "dependencies": {
-    "yaml": "^2.3.4"
   }
 }

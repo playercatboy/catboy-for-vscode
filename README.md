@@ -77,9 +77,25 @@ This extension contributes the following settings:
 
 ## Known Issues
 
-- Initial release, please report issues on the GitHub repository
+None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
+
+### 0.1.2
+
+Bug fixes and stability improvements:
+- **Fixed extension activation issues**: Extension now activates properly in all environments
+- **Resolved dependency problems**: Replaced external YAML dependency with lightweight custom parser
+- **Improved reliability**: Commands are now always registered and available
+- **Better error handling**: Enhanced logging for troubleshooting activation issues
+
+### 0.1.1
+
+Enhanced user experience improvements:
+- Status bar integration with build progress indicators
+- Smart terminal management with per-target reuse
+- Comprehensive error handling and validation
+- Command palette integration for quick target selection
 
 ### 0.1.0
 
