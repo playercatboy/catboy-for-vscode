@@ -1,0 +1,35 @@
+name: sample-project
+
+targets:
+  hello-world:
+    build:
+      type: executable
+      sources:
+        c:
+          - src/main.c
+          - src/hello.c
+      includes:
+        - include
+      defines:
+        - DEBUG=1
+        - VERSION="1.0.0"
+      links:
+        - pthread
+      flags:
+        c: -Wall -Wextra -g -O0
+
+  test-suite:
+    build:
+      type: executable
+      sources:
+        c:
+          - test/test_main.c
+          - test/test_*.c
+          - src/hello.c
+      includes:
+        - include
+        - test/include
+      defines:
+        - TESTING=1
+      flags:
+        c: -Wall -Wextra -g -O0 -coverage
