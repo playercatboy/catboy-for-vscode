@@ -3,13 +3,18 @@
   "displayName": "Catboy Build System",
   "description": "Build system integration for Catboy C build system",
   "version": "0.1.0",
-  "publisher": "catboy",
+  "publisher": "playercatboy",
   "engines": {
     "vscode": "^1.74.0"
   },
   "categories": [
     "Other"
   ],
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "icon": "resources/catboy.png",
   "keywords": [
     "catboy",
     "build",
@@ -19,7 +24,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/catboy-build/catboy-for-vscode"
+    "url": "https://github.com/playercatboy/catboy-for-vscode"
   },
   "main": "./out/extension.js",
   "activationEvents": [
