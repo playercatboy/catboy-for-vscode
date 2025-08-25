@@ -78,9 +78,57 @@ Initial release of Catboy for Visual Studio Code:
 - Build, clean, and rebuild actions
 - Terminal integration for command execution
 
+## Development
+
+### Prerequisites
+
+- Node.js 16.x or higher
+- npm 7.x or higher
+- Visual Studio Code
+
+### Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/catboy-build/catboy-for-vscode.git
+cd catboy-for-vscode
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Compile the extension:
+```bash
+npm run compile
+```
+
+### Running the Extension
+
+1. Open the project in Visual Studio Code
+2. Press `F5` to launch a new VS Code window with the extension loaded
+3. Open a folder containing a `build.yaml` file
+4. Click on the Catboy icon in the Activity Bar to see your projects
+
+### Testing
+
+Run the test suite:
+```bash
+npm test
+```
+
+### Building for Production
+
+Create a VSIX package:
+```bash
+npm install -g vsce
+vsce package
+```
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit issues and pull requests on the [GitHub repository](https://github.com/your-username/catboy-for-vscode).
+Contributions are welcome! Please feel free to submit issues and pull requests on the [GitHub repository](https://github.com/catboy-build/catboy-for-vscode).
 
 ## License
 
