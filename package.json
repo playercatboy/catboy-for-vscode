@@ -1,0 +1,131 @@
+{
+  "name": "catboy-for-vscode",
+  "displayName": "Catboy Build System",
+  "description": "Build system integration for Catboy C build system",
+  "version": "0.1.0",
+  "publisher": "catboy",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "catboy",
+    "build",
+    "c",
+    "cpp",
+    "build system"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/catboy-build/catboy-for-vscode"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/build.yaml"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "catboy",
+          "title": "Catboy",
+          "icon": "resources/catboy.svg"
+        }
+      ]
+    },
+    "views": {
+      "catboy": [
+        {
+          "id": "catboyProjects",
+          "name": "Projects",
+          "icon": "resources/catboy.svg",
+          "contextualTitle": "Catboy Projects"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "catboy.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "catboy.build",
+        "title": "Build",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "catboy.clean",
+        "title": "Clean",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "catboy.rebuild",
+        "title": "Rebuild",
+        "icon": "$(sync)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "catboy.refresh",
+          "when": "view == catboyProjects",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "catboy.build",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "inline@1"
+        },
+        {
+          "command": "catboy.clean",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "inline@2"
+        },
+        {
+          "command": "catboy.rebuild",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "inline@3"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Catboy",
+      "properties": {
+        "catboy.executablePath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the Catboy executable. If not specified, 'catboy' will be used from PATH."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.2.0",
+    "eslint": "^8.28.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.1.0",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "yaml": "^2.3.4"
+  }
+}
