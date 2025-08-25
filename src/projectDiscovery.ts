@@ -9,9 +9,16 @@ export interface CatboyTarget {
     yamlPath: string;
 }
 
+export interface CatboyBuildFile {
+    yamlPath: string;
+    projectName: string;
+    targets: CatboyTarget[];
+}
+
 export interface CatboyProject {
     name: string;
-    targets: CatboyTarget[];
+    buildFiles: CatboyBuildFile[];
+    targets: CatboyTarget[]; // Keep for backward compatibility
 }
 
 export interface ParseError {
@@ -52,12 +59,21 @@ export class ProjectDiscovery {
         const targetCount = Array.from(this.projects.values()).reduce((sum, p) => sum + p.targets.length, 0);
         this.outputChannel.appendLine(`Found ${projectCount} project(s) with ${targetCount} target(s)`);
 
-        // Sort projects alphabetically and sort targets within each project
+        // Sort projects alphabetically and sort build files and targets within each project
         const sortedProjects = Array.from(this.projects.values())
             .sort((a, b) => a.name.localeCompare(b.name));
         
-        // Sort targets within each project
+        // Sort build files and targets within each project
         sortedProjects.forEach(project => {
+            // Sort build files by path
+            project.buildFiles.sort((a, b) => a.yamlPath.localeCompare(b.yamlPath));
+            
+            // Sort targets within each build file
+            project.buildFiles.forEach(buildFile => {
+                buildFile.targets.sort((a, b) => a.name.localeCompare(b.name));
+            });
+            
+            // Sort overall project targets for compatibility
             project.targets.sort((a, b) => a.name.localeCompare(b.name));
         });
 
@@ -119,11 +135,23 @@ export class ProjectDiscovery {
             if (!this.projects.has(projectName)) {
                 this.projects.set(projectName, {
                     name: projectName,
+                    buildFiles: [],
                     targets: []
                 });
             }
 
             const project = this.projects.get(projectName)!;
+            
+            // Create or get build file entry for this YAML path
+            let buildFile = project.buildFiles.find(bf => bf.yamlPath === yamlPath);
+            if (!buildFile) {
+                buildFile = {
+                    yamlPath: yamlPath,
+                    projectName: projectName,
+                    targets: []
+                };
+                project.buildFiles.push(buildFile);
+            }
 
             if (parsed.targets && typeof parsed.targets === 'object') {
                 for (const targetName of Object.keys(parsed.targets)) {
@@ -142,12 +170,16 @@ export class ProjectDiscovery {
                         continue;
                     }
 
-                    // Add the new target
-                    project.targets.push({
+                    // Create target
+                    const target: CatboyTarget = {
                         name: targetName,
                         projectName: projectName,
                         yamlPath: yamlPath
-                    });
+                    };
+                    
+                    // Add to both project targets (for compatibility) and build file targets
+                    project.targets.push(target);
+                    buildFile.targets.push(target);
                 }
 
                 if (Object.keys(parsed.targets).length === 0) {

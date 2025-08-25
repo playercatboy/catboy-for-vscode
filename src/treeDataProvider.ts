@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { CatboyProject, CatboyTarget, ProjectDiscovery } from './projectDiscovery';
+import { CatboyProject, CatboyTarget, CatboyBuildFile, ProjectDiscovery } from './projectDiscovery';
 
 export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<CatboyItem | undefined | null | void> = new vscode.EventEmitter<CatboyItem | undefined | null | void>();
@@ -28,7 +28,11 @@ export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyIte
             );
         } else if (element instanceof ProjectItem) {
             return Promise.resolve(
-                element.project.targets.map(target => new TargetItem(target))
+                element.project.buildFiles.map(buildFile => new BuildFileItem(buildFile))
+            );
+        } else if (element instanceof BuildFileItem) {
+            return Promise.resolve(
+                element.buildFile.targets.map(target => new TargetItem(target))
             );
         }
         return Promise.resolve([]);
@@ -37,6 +41,12 @@ export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyIte
     getParent(element: CatboyItem): vscode.ProviderResult<CatboyItem> {
         if (element instanceof TargetItem) {
             const project = this.projects.find(p => p.name === element.target.projectName);
+            if (project) {
+                const buildFile = project.buildFiles.find(bf => bf.yamlPath === element.target.yamlPath);
+                return buildFile ? new BuildFileItem(buildFile) : undefined;
+            }
+        } else if (element instanceof BuildFileItem) {
+            const project = this.projects.find(p => p.name === element.buildFile.projectName);
             return project ? new ProjectItem(project) : undefined;
         }
         return undefined;
@@ -60,6 +70,37 @@ export class ProjectItem extends CatboyItem {
         this.tooltip = `Project: ${project.name}`;
         this.contextValue = 'project';
         this.iconPath = new vscode.ThemeIcon('folder');
+    }
+}
+
+export class BuildFileItem extends CatboyItem {
+    constructor(
+        public readonly buildFile: CatboyBuildFile
+    ) {
+        // Get relative path for display
+        const relativePath = vscode.workspace.asRelativePath(buildFile.yamlPath);
+        // Normalize path to always use forward slashes
+        const normalizedPath = relativePath.replace(/\\/g, '/');
+        const dir = path.dirname(normalizedPath).replace(/\\/g, '/');
+        const filename = path.basename(normalizedPath);
+        
+        // Create label string - full path with directory and forward slash
+        const labelString = dir === '.' ? filename : `${dir}/`;
+        
+        // Create tree item with label
+        super(labelString, vscode.TreeItemCollapsibleState.Expanded);
+        
+        // Use description to show the filename in a dimmed style
+        if (dir !== '.') {
+            this.description = filename;
+        }
+        
+        this.tooltip = `Build file: ${normalizedPath}\nProject: ${buildFile.projectName}\nTargets: ${buildFile.targets.length}`;
+        this.contextValue = 'buildFile';
+        this.iconPath = new vscode.ThemeIcon('file');
+        
+        // Store the path for command execution
+        this.resourceUri = vscode.Uri.file(buildFile.yamlPath);
     }
 }
 

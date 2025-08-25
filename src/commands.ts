@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { CatboyTreeDataProvider, TargetItem } from './treeDataProvider';
-import { ProjectDiscovery, CatboyTarget, CatboyProject } from './projectDiscovery';
+import { CatboyTreeDataProvider, TargetItem, BuildFileItem } from './treeDataProvider';
+import { ProjectDiscovery, CatboyTarget, CatboyProject, CatboyBuildFile } from './projectDiscovery';
 import { CatboyStatusBar } from './statusBar';
 import { TerminalManager } from './terminalManager';
 
@@ -19,28 +19,34 @@ export function registerCommands(
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('catboy.build', (item: TargetItem) => {
-            if (item && item.target) {
+        vscode.commands.registerCommand('catboy.build', (item: TargetItem | BuildFileItem) => {
+            if (item instanceof TargetItem && item.target) {
                 statusBar.setCurrentTarget(item.target);
                 executeCatboyCommand('build', item.target, statusBar, terminalManager);
+            } else if (item instanceof BuildFileItem && item.buildFile) {
+                executeCatboyCommandForBuildFile('build', item.buildFile, statusBar, terminalManager);
             }
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('catboy.clean', (item: TargetItem) => {
-            if (item && item.target) {
+        vscode.commands.registerCommand('catboy.clean', (item: TargetItem | BuildFileItem) => {
+            if (item instanceof TargetItem && item.target) {
                 statusBar.setCurrentTarget(item.target);
                 executeCatboyCommand('clean', item.target, statusBar, terminalManager);
+            } else if (item instanceof BuildFileItem && item.buildFile) {
+                executeCatboyCommandForBuildFile('clean', item.buildFile, statusBar, terminalManager);
             }
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('catboy.rebuild', (item: TargetItem) => {
-            if (item && item.target) {
+        vscode.commands.registerCommand('catboy.rebuild', (item: TargetItem | BuildFileItem) => {
+            if (item instanceof TargetItem && item.target) {
                 statusBar.setCurrentTarget(item.target);
                 executeCatboyCommand('rebuild', item.target, statusBar, terminalManager);
+            } else if (item instanceof BuildFileItem && item.buildFile) {
+                executeCatboyCommandForBuildFile('rebuild', item.buildFile, statusBar, terminalManager);
             }
         })
     );
@@ -93,6 +99,41 @@ export function registerCommands(
             projectDiscovery.showOutput();
         })
     );
+}
+
+function executeCatboyCommandForBuildFile(
+    command: string,
+    buildFile: CatboyBuildFile,
+    statusBar: CatboyStatusBar,
+    terminalManager: TerminalManager
+) {
+    const config = vscode.workspace.getConfiguration('catboy');
+    const catboyPath = config.get<string>('executablePath') || 'catboy';
+    
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(buildFile.yamlPath));
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage(`Cannot find workspace folder for ${buildFile.yamlPath}`);
+        return;
+    }
+
+    statusBar.setBuildStatus(true, command);
+
+    const relativeYamlPath = path.relative(workspaceFolder.uri.fsPath, buildFile.yamlPath);
+    // No target specified - builds all targets in the file
+    const commandLine = `${catboyPath} ${command} -v -f "${relativeYamlPath}"`;
+    
+    const terminal = terminalManager.getOrCreateTerminal(
+        buildFile.projectName,
+        'all-targets',
+        workspaceFolder.uri.fsPath
+    );
+
+    terminal.show();
+    terminal.sendText(commandLine);
+
+    setTimeout(() => {
+        statusBar.setBuildStatus(false);
+    }, 3000);
 }
 
 function executeCatboyCommand(

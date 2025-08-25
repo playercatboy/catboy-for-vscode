@@ -2,7 +2,22 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
-## [0.1.3] - 2024-12-25
+## [0.1.4] - 2025-08-26
+
+### Added
+- **Build File Tree Level**: New intermediate tree level showing build.yaml files between projects and targets
+- **Build All Targets**: Build file entries have action buttons to build/clean/rebuild all targets in a single YAML file
+- **File Icons**: Build files display with file icons for better visual distinction
+
+### Changed
+- **Tree Structure**: Reorganized to Project → Build Files → Targets hierarchy for better organization
+- **Path Display**: Build file paths shown with directory in normal text and filename dimmed for clarity
+- **Path Separators**: Normalized to always use forward slashes (/) across all platforms for consistency
+
+### Fixed
+- **Path Separator Consistency**: Fixed inconsistent backslash/forward slash mixing on Windows
+
+## [0.1.3] - 2025-08-26
 
 ### Fixed
 - **Duplicate Targets Bug**: Fixed issue where targets would appear duplicated in the tree view when rapidly clicking refresh
@@ -14,7 +29,7 @@ All notable changes to the "Catboy for Visual Studio Code" extension will be doc
 - **Duplicate Detection**: Simplified and improved duplicate target detection logic
 - **State Management**: Better state management during project refresh operations
 
-## [0.1.2] - 2024-12-25
+## [0.1.2] - 2025-08-25
 
 ### Fixed
 - **Extension Activation**: Fixed critical bug preventing extension from activating in production environments
@@ -33,7 +48,7 @@ All notable changes to the "Catboy for Visual Studio Code" extension will be doc
 - Improved extension reliability across different VS Code environments
 - Zero external runtime dependencies for better portability
 
-## [0.1.1] - 2024-12-25
+## [0.1.1] - 2025-08-25
 
 ### Added
 - **Status Bar Integration**: Shows current selected target and build progress indicators
@@ -46,7 +61,7 @@ All notable changes to the "Catboy for Visual Studio Code" extension will be doc
 - More robust error reporting and validation
 - Enhanced terminal management for build operations
 
-## [0.1.0] - 2024-12-25
+## [0.1.0] - 2025-08-25
 
 ### Added
 

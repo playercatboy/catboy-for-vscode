@@ -81,6 +81,14 @@ None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
 
+### 0.1.4
+
+Enhanced tree view and build management:
+- **New build file tree level**: Shows build.yaml files between projects and targets for better organization
+- **Build all targets**: Build file entries can build/clean/rebuild all targets at once
+- **Improved path display**: Consistent forward slash separators across all platforms
+- **Better visual hierarchy**: File icons and dimmed filenames for clearer navigation
+
 ### 0.1.3
 
 Bug fixes and UI improvements:
