@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { CatboyTreeDataProvider, TargetItem, BuildFileItem, getIconForTargetType } from './treeDataProvider';
+import { CatboyTreeDataProvider, TargetItem, BuildFileItem, getIconForTargetType, getTargetTypeDisplayName } from './treeDataProvider';
 import { ProjectDiscovery, CatboyTarget, CatboyProject, CatboyBuildFile } from './projectDiscovery';
 import { CatboyStatusBar } from './statusBar';
 import { TerminalManager } from './terminalManager';
@@ -85,15 +85,22 @@ export function registerCommands(
         vscode.commands.registerCommand('catboy.selectTarget', async () => {
             const projects = await projectDiscovery.discoverProjects();
             const items: vscode.QuickPickItem[] = [];
+            const currentTarget = treeDataProvider.getCurrentTarget();
 
             for (const project of projects) {
                 for (const target of project.targets) {
                     const iconName = getIconNameForTargetType(target.targetType);
-                    const typeInfo = target.targetType ? ` (${target.targetType})` : '';
+                    const friendlyType = getTargetTypeDisplayName(target.targetType);
+                    const typeInfo = friendlyType ? ` (${friendlyType})` : '';
+                    const isCurrentTarget = currentTarget && 
+                                          currentTarget.name === target.name && 
+                                          currentTarget.projectName === project.name;
+                    
                     items.push({
-                        label: `$(${iconName}) ${target.name}`,
+                        label: `$(${iconName}) ${target.name}${isCurrentTarget ? ' $(check)' : ''}`,
                         description: `${project.name}${typeInfo}`,
-                        detail: vscode.workspace.asRelativePath(target.yamlPath)
+                        detail: vscode.workspace.asRelativePath(target.yamlPath),
+                        picked: isCurrentTarget
                     });
                 }
             }
@@ -109,9 +116,9 @@ export function registerCommands(
             });
 
             if (selected) {
-                // Extract target name by removing icon prefix (e.g., "$(symbol-method) target-name" -> "target-name")
-                const targetName = selected.label.replace(/^\$\([^)]+\) /, '');
-                // Extract project name by removing type info (e.g., "project-name (executable)" -> "project-name")
+                // Extract target name by removing icon prefix and checkmark (e.g., "$(symbol-method) target-name $(check)" -> "target-name")
+                const targetName = selected.label.replace(/^\$\([^)]+\) /, '').replace(/ \$\(check\)$/, '');
+                // Extract project name by removing type info (e.g., "project-name (Executable)" -> "project-name")
                 const projectName = selected.description!.replace(/ \([^)]+\)$/, '');
                 
                 for (const project of projects) {

@@ -82,6 +82,13 @@ None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
 
+### 0.1.9
+
+Bug fixes and UX improvements:
+- **Fixed Extension Test**: Corrected publisher ID in extension test suite
+- **Enhanced Target Selection**: Target selection dialog now shows user-friendly target type names
+- **Current Target Indication**: Selected target is now highlighted with checkmark and pre-selected in quick pick
+
 ### 0.1.8
 
 Enhanced activity bar icon and attribution:

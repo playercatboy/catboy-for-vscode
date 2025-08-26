@@ -5,7 +5,7 @@ suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
 
     test('Extension should be present', () => {
-        assert.ok(vscode.extensions.getExtension('catboy.catboy-for-vscode'));
+        assert.ok(vscode.extensions.getExtension('playercatboy.catboy-for-vscode'));
     });
 
     test('Should register all commands', async () => {

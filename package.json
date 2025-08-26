@@ -2,7 +2,7 @@
   "name": "catboy-for-vscode",
   "displayName": "Catboy Build System",
   "description": "Catboy™ build system integration for VS Code.",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "publisher": "playercatboy",
   "engines": {
     "vscode": "^1.74.0"
@@ -241,6 +241,7 @@
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "@vscode/test-electron": "^2.2.0",
+    "@vscode/vsce": "^3.6.0",
     "eslint": "^8.28.0",
     "glob": "^8.0.3",
     "mocha": "^10.1.0",

@@ -2,6 +2,16 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
+## [0.1.9] - 2025-08-26
+
+### Fixed
+- **Extension Test**: Fixed publisher ID in extension test from incorrect 'catboy.catboy-for-vscode' to correct 'playercatboy.catboy-for-vscode'
+- **Target Selection Enhancement**: Target selection dialog now properly shows friendly display names for target types (e.g., "Executable" instead of "exe")
+- **Current Target Indicator**: Target selection dialog now shows checkmark for the currently selected target and pre-selects it in the list
+
+### Changed
+- **Improved Target Selection UX**: Current target is now visually highlighted and pre-selected in the target selection quick pick
+
 ## [0.1.8] - 2025-08-26
 
 ### Added
