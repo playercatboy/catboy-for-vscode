@@ -1,0 +1,92 @@
+{
+  "catboy.extension.name": "Catboy Build System",
+  "catboy.extension.description": "Catboy™ build system integration for VS Code.",
+  
+  "catboy.view.projects.name": "Projects",
+  "catboy.view.projects.title": "Catboy Projects",
+  
+  "catboy.project.label": "Project",
+  "catboy.project.tooltip": "Project: {0}\nTargets: {1}",
+  "catboy.project.targetCount.singular": "{0} target",
+  "catboy.project.targetCount.plural": "{0} targets",
+  
+  "catboy.buildFile.tooltip": "Build file: {0}\nProject: {1}\nTargets: {2}",
+  
+  "catboy.target.label": "Target",
+  "catboy.target.tooltip": "Target: {0}\nProject: {1}",
+  "catboy.target.tooltip.withType": "Target: {0}\nProject: {1}\nType: {2}",
+  "catboy.target.tooltip.current": "Target: {0}\nProject: {1}\nType: {2}\n[CURRENT TARGET]",
+  "catboy.target.currentPrefix": "(Current)",
+  
+  "catboy.targetType.executable": "Executable",
+  "catboy.targetType.dynamicLinkLibrary": "Dynamic Link Library",
+  "catboy.targetType.staticLinkLibrary": "Static Link Library",
+  "catboy.targetType.objectFiles": "Object Files",
+  "catboy.targetType.lunaBsp": "Luna BSP",
+  
+  "catboy.command.refresh.title": "Refresh",
+  "catboy.command.build.title": "Build",
+  "catboy.command.clean.title": "Clean",
+  "catboy.command.rebuild.title": "Rebuild",
+  "catboy.command.selectTarget.title": "Catboy: Select Target",
+  "catboy.command.showOutput.title": "Catboy: Show Output",
+  "catboy.command.toggleYamlFiles.title": "Toggle YAML File Showing",
+  "catboy.command.toggleYamlFilesOn.title": "Toggle YAML File Showing (ON)",
+  "catboy.command.toggleYamlFilesOff.title": "Toggle YAML File Showing (OFF)",
+  "catboy.command.goToFile.title": "Go to YAML File",
+  "catboy.command.setCurrentTarget.title": "Set as Current Target",
+  "catboy.command.buildCurrent.title": "Build Current Target",
+  "catboy.command.cleanCurrent.title": "Clean Current Target",
+  "catboy.command.rebuildCurrent.title": "Rebuild Current Target",
+  "catboy.command.changeLanguage.title": "Catboy: Change Language",
+  
+  "catboy.statusBar.noTarget": "Catboy: No target selected",
+  "catboy.statusBar.currentTarget": "Catboy: {0}/{1}",
+  "catboy.statusBar.building": "Catboy: {0} {1}",
+  "catboy.statusBar.tooltip.noTarget": "Click to select a Catboy target",
+  "catboy.statusBar.tooltip.currentTarget": "Current target: {0}\nProject: {1}\nClick to select a different target",
+  "catboy.statusBar.tooltip.building": "Running {0} on {1}",
+  
+  "catboy.statusBar.buildButton.text": "Build",
+  "catboy.statusBar.buildButton.tooltip": "Build current target",
+  "catboy.statusBar.cleanButton.text": "Clean",
+  "catboy.statusBar.cleanButton.tooltip": "Clean current target",
+  "catboy.statusBar.rebuildButton.text": "Rebuild",
+  "catboy.statusBar.rebuildButton.tooltip": "Rebuild current target",
+  
+  "catboy.quickPick.selectTarget.placeholder": "Select a Catboy target",
+  "catboy.quickPick.selectTarget.title": "Catboy Target Selection",
+  "catboy.quickPick.selectTarget.noTargets": "No Catboy targets found in the workspace",
+  "catboy.quickPick.selectTarget.selected": "Selected target: {0}/{1}",
+  
+  "catboy.output.channel.name": "Catboy",
+  "catboy.output.discoveringProjects": "Discovering Catboy projects...",
+  "catboy.output.foundProject": "Found project: {0} in {1}",
+  "catboy.output.foundTarget": "  - Target: {0} (type: {1})",
+  "catboy.output.parsingError": "Error parsing {0}: {1}",
+  "catboy.output.duplicateTarget": "Warning: Duplicate target '{0}' found in project '{1}'. Using first occurrence.",
+  "catboy.output.emptyFile": "Warning: {0} is empty or contains only whitespace",
+  "catboy.output.invalidYaml": "Warning: {0} does not have a valid project name or targets section",
+  "catboy.output.noProjects": "No Catboy projects found in workspace",
+  "catboy.output.foundProjects": "Found {0} Catboy project(s)",
+  
+  "catboy.terminal.running": "Running: {0}",
+  
+  "catboy.config.executablePath.description": "Path to the Catboy executable. If not specified, 'catboy' will be used from PATH.",
+  "catboy.config.showYamlFiles.description": "Show build.yaml file entries in the project tree view.",
+  "catboy.config.language.description": "Override the extension language (requires reload).",
+  "catboy.config.language.auto": "Auto (follow VS Code language)",
+  "catboy.config.language.english": "English",
+  "catboy.config.language.chinese": "中文(简体)",
+  "catboy.config.verboseBuild.description": "Enable verbose build output (-v flag)",
+  
+  "catboy.languageSelector.placeholder": "Select language for Catboy extension",
+  "catboy.languageChange.message": "Language setting changed. Please reload the window to fully apply changes to all UI elements (buttons, tooltips, etc.).",
+  "catboy.languageChange.reload": "Reload Window",
+  "catboy.languageMismatch.message": "Your Catboy language setting differs from VS Code's display language. Some UI buttons may show in VS Code's language until you reload the window.",
+  "catboy.languageMismatch.configure": "Configure VS Code Language",
+  
+  "catboy.errors.noTargetSelected": "No target selected. Please select a target first.",
+  "catboy.errors.cannotFindWorkspace": "Cannot find workspace folder for {0}",
+  "catboy.errors.yamlPathNotFound": "YAML path not found for target: {0}"
+}

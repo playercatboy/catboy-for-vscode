@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { CatboyProject, CatboyTarget, CatboyBuildFile, ProjectDiscovery } from './projectDiscovery';
+import { localize } from './languageManager';
 
 export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<CatboyItem | undefined | null | void> = new vscode.EventEmitter<CatboyItem | undefined | null | void>();
@@ -120,9 +121,11 @@ export class ProjectItem extends CatboyItem {
         
         // Add target count to description for additional context
         const targetCount = project.targets.length;
-        this.description = `${targetCount} target${targetCount !== 1 ? 's' : ''}`;
+        this.description = targetCount === 1 
+            ? localize('catboy.project.targetCount.singular', '{0} target', targetCount.toString())
+            : localize('catboy.project.targetCount.plural', '{0} targets', targetCount.toString());
         
-        this.tooltip = `Project: ${project.name}\nTargets: ${targetCount}`;
+        this.tooltip = localize('catboy.project.tooltip', 'Project: {0}\\nTargets: {1}', project.name, targetCount.toString());
         this.contextValue = 'project';
         
         // Use a more prominent icon with color for projects
@@ -152,7 +155,7 @@ export class BuildFileItem extends CatboyItem {
             this.description = filename;
         }
         
-        this.tooltip = `Build file: ${normalizedPath}\nProject: ${buildFile.projectName}\nTargets: ${buildFile.targets.length}`;
+        this.tooltip = localize('catboy.buildFile.tooltip', 'Build file: {0}\\nProject: {1}\\nTargets: {2}', normalizedPath, buildFile.projectName, buildFile.targets.length.toString());
         this.contextValue = 'buildFile';
         this.iconPath = new vscode.ThemeIcon('file');
         
@@ -169,20 +172,20 @@ export function getTargetTypeDisplayName(targetType?: string): string {
     switch (targetType.toLowerCase()) {
         case 'exe':
         case 'executable':
-            return 'Executable';
+            return localize('catboy.targetType.executable', 'Executable');
         case 'dll':
         case 'shared_library':
-            return 'Dynamic Link Library';
+            return localize('catboy.targetType.dynamicLinkLibrary', 'Dynamic Link Library');
         case 'sll':
         case 'static_library':
         case 'static_linked_library':
-            return 'Static Link Library';
+            return localize('catboy.targetType.staticLinkLibrary', 'Static Link Library');
         case 'obj':
         case 'object_files':
-            return 'Object Files';
+            return localize('catboy.targetType.objectFiles', 'Object Files');
         case 'luna':
         case 'luna_bsp':
-            return 'Luna BSP';
+            return localize('catboy.targetType.lunaBsp', 'Luna BSP');
         default:
             return targetType; // Return original type if unknown
     }
@@ -232,7 +235,7 @@ export class TargetItem extends CatboyItem {
         let description = '';
         
         if (this.isCurrent) {
-            description = '(Current) ';
+            description = localize('catboy.target.currentPrefix', '(Current)') + ' ';
         }
         
         if (displayTypeName) {
@@ -244,9 +247,13 @@ export class TargetItem extends CatboyItem {
         }
         
         // Set tooltip with target type info and current status
-        const typeInfo = target.targetType ? `\nType: ${target.targetType}` : '';
-        const currentStatus = this.isCurrent ? '\n[CURRENT TARGET]' : '';
-        this.tooltip = `Target: ${target.name}\nProject: ${target.projectName}${typeInfo}${currentStatus}\nConfig: ${target.yamlPath}`;
+        if (this.isCurrent && target.targetType) {
+            this.tooltip = localize('catboy.target.tooltip.current', 'Target: {0}\\nProject: {1}\\nType: {2}\\n[CURRENT TARGET]', target.name, target.projectName, target.targetType);
+        } else if (target.targetType) {
+            this.tooltip = localize('catboy.target.tooltip.withType', 'Target: {0}\\nProject: {1}\\nType: {2}', target.name, target.projectName, target.targetType);
+        } else {
+            this.tooltip = localize('catboy.target.tooltip', 'Target: {0}\\nProject: {1}', target.name, target.projectName);
+        }
         this.contextValue = 'target';
         
         // Select icon based on target type with current target styling

@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { parseSimpleYaml } from './yamlParser';
+import { localize } from './languageManager';
 
 export interface CatboyTarget {
     name: string;
@@ -33,7 +34,7 @@ export class ProjectDiscovery {
     private outputChannel: vscode.OutputChannel;
 
     constructor() {
-        this.outputChannel = vscode.window.createOutputChannel('Catboy');
+        this.outputChannel = vscode.window.createOutputChannel(localize('catboy.output.channel.name', 'Catboy'));
     }
 
     async discoverProjects(): Promise<CatboyProject[]> {

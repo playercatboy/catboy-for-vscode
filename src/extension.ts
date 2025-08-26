@@ -4,10 +4,14 @@ import { registerCommands } from './commands';
 import { ProjectDiscovery } from './projectDiscovery';
 import { CatboyStatusBar } from './statusBar';
 import { TerminalManager } from './terminalManager';
+import { LanguageManager } from './languageManager';
 
 export function activate(context: vscode.ExtensionContext) {
     try {
         console.log('Catboy extension is activating...');
+        
+        // Initialize language manager
+        LanguageManager.getInstance(context.extensionPath);
         
         const projectDiscovery = new ProjectDiscovery();
         const treeDataProvider = new CatboyTreeDataProvider(projectDiscovery);

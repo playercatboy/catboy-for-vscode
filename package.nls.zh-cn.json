@@ -1,0 +1,31 @@
+{
+  "catboy.extension.name": "Catboy 构建系统",
+  "catboy.extension.description": "Catboy™ 构建系统 VS Code 集成。",
+  
+  "catboy.view.projects.name": "项目",
+  "catboy.view.projects.title": "Catboy 项目",
+  
+  "catboy.command.refresh.title": "刷新",
+  "catboy.command.build.title": "构建",
+  "catboy.command.clean.title": "清理",
+  "catboy.command.rebuild.title": "重新构建",
+  "catboy.command.selectTarget.title": "Catboy: 选择构建目标",
+  "catboy.command.showOutput.title": "Catboy: 显示输出",
+  "catboy.command.toggleYamlFiles.title": "切换显示 YAML 文件",
+  "catboy.command.toggleYamlFilesOn.title": "切换显示 YAML 文件 (开启)",
+  "catboy.command.toggleYamlFilesOff.title": "切换显示 YAML 文件 (关闭)",
+  "catboy.command.goToFile.title": "转到 YAML 文件",
+  "catboy.command.setCurrentTarget.title": "设置为当前构建目标",
+  "catboy.command.buildCurrent.title": "构建当前目标",
+  "catboy.command.cleanCurrent.title": "清理当前目标",
+  "catboy.command.rebuildCurrent.title": "重新构建当前目标",
+  "catboy.command.changeLanguage.title": "Catboy: 更改语言",
+  
+  "catboy.config.executablePath.description": "Catboy 可执行文件的路径。如果未指定，将使用 PATH 中的 'catboy'。",
+  "catboy.config.showYamlFiles.description": "在项目树视图中显示 build.yaml 文件条目。",
+  "catboy.config.language.description": "覆盖扩展语言设置（需要重新加载）。",
+  "catboy.config.language.auto": "自动（跟随 VS Code 语言）",
+  "catboy.config.language.english": "English",
+  "catboy.config.language.chinese": "中文(简体)",
+  "catboy.config.verboseBuild.description": "启用详细构建输出（-v 标志）"
+}

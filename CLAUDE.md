@@ -52,31 +52,36 @@ npm run lint
    - **Output Channel**: Detailed logging and error reporting
 
 4. **Command Execution**: Integrates with VSCode terminal to execute Catboy CLI commands:
-   - Build: `catboy build -v -f <yaml-file>`
-   - Clean: `catboy clean -v -f <yaml-file>`
-   - Rebuild: `catboy rebuild -v -f <yaml-file>`
+   - Build: `catboy build [-v] -f <yaml-file>` (verbose flag configurable via `catboy.verboseBuild` setting)
+   - Clean: `catboy clean [-v] -f <yaml-file>` (verbose flag configurable via `catboy.verboseBuild` setting)
+   - Rebuild: `catboy rebuild [-v] -f <yaml-file>` (verbose flag configurable via `catboy.verboseBuild` setting)
 
 5. **Enhanced Features**:
+   - **Internationalization**: Comprehensive Simplified Chinese (zh-hans) support with runtime language switching
    - **Error Handling**: Comprehensive YAML validation with user-friendly error messages
    - **Terminal Management**: Smart reuse of terminals per target
    - **Command Palette**: Quick target selection via "Catboy: Select Target"
    - **File Watching**: Auto-refresh on build.yaml changes
+   - **Language Override**: Custom language selection independent of VS Code system settings
 
 ### Key Implementation Areas
 
 - **src/extension.ts**: Extension entry point and activation logic
 - **src/treeDataProvider.ts**: Tree view implementation for project/target display
 - **src/projectDiscovery.ts**: Logic for finding and parsing build.yaml files with comprehensive error handling
-- **src/commands.ts**: Command handlers for build/clean/rebuild operations with status integration
+- **src/commands.ts**: Command handlers for build/clean/rebuild operations with status integration and configurable verbose flag
 - **src/statusBar.ts**: Status bar integration showing current target and build progress
 - **src/terminalManager.ts**: Smart terminal management with reuse per target
 - **src/yamlParser.ts**: Custom lightweight YAML parser for build.yaml files (zero dependencies)
+- **src/languageManager.ts**: Custom internationalization system with runtime language switching and placeholder replacement
 
 ### Extension Configuration
 
-The extension provides a setting for the Catboy executable path:
-- Setting ID: `catboy.executablePath`
-- Default: Uses `catboy` from PATH if not specified
+The extension provides the following configuration settings:
+- `catboy.executablePath`: Path to the Catboy executable (default: uses `catboy` from PATH)
+- `catboy.showYamlFiles`: Show build.yaml file entries in project tree view (default: false)
+- `catboy.verboseBuild`: Enable verbose build output with `-v` flag (default: true)
+- `catboy.language`: Override extension language, supports "auto", "en", "zh-hans" (default: auto)
 
 ## Build Configuration Format
 
@@ -112,6 +117,14 @@ Run `npm test` for the complete test suite.
 ✅ **Complete Implementation** - All core features and enhancements have been implemented and tested.
 
 ### Version History
+- **v0.1.10**: Added comprehensive Simplified Chinese (zh-hans) internationalization support and configurable verbose build setting
+- **v0.1.9**: Enhanced target selection with friendly type names and current target indicators
+- **v0.1.8**: Custom cat icon for activity bar with theme adaptation
+- **v0.1.7**: Go-to-file navigation and current target system with status bar controls
+- **v0.1.6**: YAML file visibility toggle and improved visual hierarchy
+- **v0.1.5**: Target type-based icons and display enhancements
+- **v0.1.4**: Build file tree level and path normalization improvements
+- **v0.1.3**: Fixed duplicate targets bug and added alphabetical sorting
 - **v0.1.2**: Fixed critical production activation issues, replaced external YAML dependency
 - **v0.1.1**: Added status bar integration and enhanced user experience
 - **v0.1.0**: Initial release with core functionality
@@ -120,3 +133,5 @@ Run `npm test` for the complete test suite.
 - Zero external runtime dependencies (custom YAML parser included)
 - Activates on `onStartupFinished` for immediate command availability
 - Comprehensive error handling and logging for production troubleshooting
+- Custom internationalization system bypassing vscode-nls limitations for runtime language switching
+- Multiple package.nls locale files for VS Code UI button translations (zh-hans, zh-cn, zh)

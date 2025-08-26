@@ -1,0 +1,31 @@
+{
+  "catboy.extension.name": "Catboy Build System",
+  "catboy.extension.description": "Catboy™ build system integration for VS Code.",
+  
+  "catboy.view.projects.name": "Projects",
+  "catboy.view.projects.title": "Catboy Projects",
+  
+  "catboy.command.refresh.title": "Refresh",
+  "catboy.command.build.title": "Build",
+  "catboy.command.clean.title": "Clean",
+  "catboy.command.rebuild.title": "Rebuild",
+  "catboy.command.selectTarget.title": "Catboy: Select Target",
+  "catboy.command.showOutput.title": "Catboy: Show Output",
+  "catboy.command.toggleYamlFiles.title": "Toggle YAML File Showing",
+  "catboy.command.toggleYamlFilesOn.title": "Toggle YAML File Showing (ON)",
+  "catboy.command.toggleYamlFilesOff.title": "Toggle YAML File Showing (OFF)",
+  "catboy.command.goToFile.title": "Go to YAML File",
+  "catboy.command.setCurrentTarget.title": "Set as Current Target",
+  "catboy.command.buildCurrent.title": "Build Current Target",
+  "catboy.command.cleanCurrent.title": "Clean Current Target",
+  "catboy.command.rebuildCurrent.title": "Rebuild Current Target",
+  "catboy.command.changeLanguage.title": "Catboy: Change Language",
+  
+  "catboy.config.executablePath.description": "Path to the Catboy executable. If not specified, 'catboy' will be used from PATH.",
+  "catboy.config.showYamlFiles.description": "Show build.yaml file entries in the project tree view.",
+  "catboy.config.language.description": "Override the extension language (requires reload).",
+  "catboy.config.language.auto": "Auto (follow VS Code language)",
+  "catboy.config.language.english": "English",
+  "catboy.config.language.chinese": "中文(简体)",
+  "catboy.config.verboseBuild.description": "Enable verbose build output (-v flag)"
+}

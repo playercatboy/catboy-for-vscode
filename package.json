@@ -1,8 +1,8 @@
 {
   "name": "catboy-for-vscode",
-  "displayName": "Catboy Build System",
-  "description": "Catboy™ build system integration for VS Code.",
-  "version": "0.1.9",
+  "displayName": "%catboy.extension.name%",
+  "description": "%catboy.extension.description%",
+  "version": "0.1.10",
   "publisher": "playercatboy",
   "engines": {
     "vscode": "^1.74.0"
@@ -44,45 +44,45 @@
       "catboy": [
         {
           "id": "catboyProjects",
-          "name": "Projects",
-          "contextualTitle": "Catboy Projects"
+          "name": "%catboy.view.projects.name%",
+          "contextualTitle": "%catboy.view.projects.title%"
         }
       ]
     },
     "commands": [
       {
         "command": "catboy.refresh",
-        "title": "Refresh",
+        "title": "%catboy.command.refresh.title%",
         "icon": "$(refresh)"
       },
       {
         "command": "catboy.build",
-        "title": "Build",
+        "title": "%catboy.command.build.title%",
         "icon": "$(tools)"
       },
       {
         "command": "catboy.clean",
-        "title": "Clean",
+        "title": "%catboy.command.clean.title%",
         "icon": "$(trash)"
       },
       {
         "command": "catboy.rebuild",
-        "title": "Rebuild",
+        "title": "%catboy.command.rebuild.title%",
         "icon": "$(sync)"
       },
       {
         "command": "catboy.selectTarget",
-        "title": "Catboy: Select Target",
+        "title": "%catboy.command.selectTarget.title%",
         "category": "Catboy"
       },
       {
         "command": "catboy.showOutput",
-        "title": "Catboy: Show Output",
+        "title": "%catboy.command.showOutput.title%",
         "category": "Catboy"
       },
       {
         "command": "catboy.toggleYamlFiles",
-        "title": "Toggle YAML File Showing",
+        "title": "%catboy.command.toggleYamlFiles.title%",
         "icon": {
           "light": "$(file)",
           "dark": "$(file)"
@@ -90,37 +90,42 @@
       },
       {
         "command": "catboy.toggleYamlFilesOn",
-        "title": "Toggle YAML File Showing (ON)",
+        "title": "%catboy.command.toggleYamlFilesOn.title%",
         "icon": "$(file-code)"
       },
       {
         "command": "catboy.toggleYamlFilesOff",
-        "title": "Toggle YAML File Showing (OFF)",
+        "title": "%catboy.command.toggleYamlFilesOff.title%",
         "icon": "$(file)"
       },
       {
         "command": "catboy.goToFile",
-        "title": "Go to YAML File",
+        "title": "%catboy.command.goToFile.title%",
         "icon": "$(go-to-file)"
       },
       {
         "command": "catboy.setCurrentTarget",
-        "title": "Set as Current Target"
+        "title": "%catboy.command.setCurrentTarget.title%"
       },
       {
         "command": "catboy.buildCurrent",
-        "title": "Build Current Target",
+        "title": "%catboy.command.buildCurrent.title%",
         "icon": "$(tools)"
       },
       {
         "command": "catboy.cleanCurrent",
-        "title": "Clean Current Target",
+        "title": "%catboy.command.cleanCurrent.title%",
         "icon": "$(trash)"
       },
       {
         "command": "catboy.rebuildCurrent",
-        "title": "Rebuild Current Target",
+        "title": "%catboy.command.rebuildCurrent.title%",
         "icon": "$(sync)"
+      },
+      {
+        "command": "catboy.changeLanguage",
+        "title": "%catboy.command.changeLanguage.title%",
+        "category": "Catboy"
       }
     ],
     "menus": {
@@ -215,12 +220,28 @@
         "catboy.executablePath": {
           "type": "string",
           "default": "",
-          "description": "Path to the Catboy executable. If not specified, 'catboy' will be used from PATH."
+          "description": "%catboy.config.executablePath.description%"
         },
         "catboy.showYamlFiles": {
           "type": "boolean",
           "default": false,
-          "description": "Show build.yaml file entries in the project tree view."
+          "description": "%catboy.config.showYamlFiles.description%"
+        },
+        "catboy.language": {
+          "type": "string",
+          "enum": ["auto", "en", "zh-hans"],
+          "enumDescriptions": [
+            "%catboy.config.language.auto%",
+            "%catboy.config.language.english%", 
+            "%catboy.config.language.chinese%"
+          ],
+          "default": "auto",
+          "description": "%catboy.config.language.description%"
+        },
+        "catboy.verboseBuild": {
+          "type": "boolean",
+          "default": true,
+          "description": "%catboy.config.verboseBuild.description%"
         }
       }
     }
@@ -228,6 +249,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
+    "compile:i18n": "npx vscode-nls-dev extract . i18n && npx vscode-nls-dev bundle .",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
@@ -245,6 +267,10 @@
     "eslint": "^8.28.0",
     "glob": "^8.0.3",
     "mocha": "^10.1.0",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.3",
+    "vscode-nls-dev": "^4.0.4"
+  },
+  "dependencies": {
+    "vscode-nls": "^5.2.0"
   }
 }

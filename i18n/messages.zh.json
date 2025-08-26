@@ -1,0 +1,91 @@
+{
+  "catboy.extension.name": "Catboy 构建系统",
+  "catboy.extension.description": "Catboy™ 构建系统 VS Code 集成。",
+  
+  "catboy.view.projects.name": "项目",
+  "catboy.view.projects.title": "Catboy 项目",
+  
+  "catboy.project.label": "项目",
+  "catboy.project.tooltip": "项目: {0}\n构建目标: {1}",
+  "catboy.project.targetCount.singular": "{0} 个构建目标",
+  "catboy.project.targetCount.plural": "{0} 个构建目标",
+  
+  "catboy.buildFile.tooltip": "构建文件: {0}\n项目: {1}\n构建目标: {2}",
+  
+  "catboy.target.label": "构建目标",
+  "catboy.target.tooltip": "构建目标: {0}\n项目: {1}",
+  "catboy.target.tooltip.withType": "构建目标: {0}\n项目: {1}\n类型: {2}",
+  "catboy.target.tooltip.current": "构建目标: {0}\n项目: {1}\n类型: {2}\n[当前构建目标]",
+  "catboy.target.currentPrefix": "(当前)",
+  
+  "catboy.targetType.executable": "可执行程序",
+  "catboy.targetType.dynamicLinkLibrary": "动态链接库",
+  "catboy.targetType.staticLinkLibrary": "静态链接库",
+  "catboy.targetType.objectFiles": "目标文件",
+  "catboy.targetType.lunaBsp": "Luna BSP",
+  
+  "catboy.command.refresh.title": "刷新",
+  "catboy.command.build.title": "构建",
+  "catboy.command.clean.title": "清理",
+  "catboy.command.rebuild.title": "重新构建",
+  "catboy.command.selectTarget.title": "Catboy: 选择构建目标",
+  "catboy.command.showOutput.title": "Catboy: 显示输出",
+  "catboy.command.toggleYamlFiles.title": "切换显示 YAML 文件",
+  "catboy.command.toggleYamlFilesOn.title": "切换显示 YAML 文件 (开启)",
+  "catboy.command.toggleYamlFilesOff.title": "切换显示 YAML 文件 (关闭)",
+  "catboy.command.goToFile.title": "转到 YAML 文件",
+  "catboy.command.setCurrentTarget.title": "设置为当前构建目标",
+  "catboy.command.buildCurrent.title": "构建当前目标",
+  "catboy.command.cleanCurrent.title": "清理当前目标",
+  "catboy.command.rebuildCurrent.title": "重新构建当前目标",
+  "catboy.command.changeLanguage.title": "Catboy: 更改语言",
+  
+  "catboy.statusBar.noTarget": "Catboy: 未选择构建目标",
+  "catboy.statusBar.currentTarget": "Catboy: {0}/{1}",
+  "catboy.statusBar.building": "Catboy: 正在{0} {1}",
+  "catboy.statusBar.tooltip.noTarget": "点击选择一个 Catboy 构建目标",
+  "catboy.statusBar.tooltip.currentTarget": "当前构建目标: {0}\n项目: {1}\n点击选择其他构建目标",
+  "catboy.statusBar.tooltip.building": "正在对 {1} 执行{0}",
+  
+  "catboy.statusBar.buildButton.text": "构建",
+  "catboy.statusBar.buildButton.tooltip": "构建当前目标",
+  "catboy.statusBar.cleanButton.text": "清理",
+  "catboy.statusBar.cleanButton.tooltip": "清理当前目标",
+  "catboy.statusBar.rebuildButton.text": "重新构建",
+  "catboy.statusBar.rebuildButton.tooltip": "重新构建当前目标",
+  
+  "catboy.quickPick.selectTarget.placeholder": "选择一个 Catboy 构建目标",
+  "catboy.quickPick.selectTarget.title": "Catboy 构建目标选择",
+  "catboy.quickPick.selectTarget.noTargets": "工作区中未找到 Catboy 构建目标",
+  "catboy.quickPick.selectTarget.selected": "已选择构建目标: {0}/{1}",
+  
+  "catboy.output.channel.name": "Catboy",
+  "catboy.output.discoveringProjects": "正在发现 Catboy 项目...",
+  "catboy.output.foundProject": "找到项目: {0} 在 {1}",
+  "catboy.output.foundTarget": "  - 构建目标: {0} (类型: {1})",
+  "catboy.output.parsingError": "解析 {0} 时出错: {1}",
+  "catboy.output.duplicateTarget": "警告: 在项目 '{1}' 中发现重复的构建目标 '{0}'。使用第一个出现的。",
+  "catboy.output.emptyFile": "警告: {0} 为空或仅包含空白字符",
+  "catboy.output.invalidYaml": "警告: {0} 没有有效的项目名称或构建目标部分",
+  "catboy.output.noProjects": "工作区中未找到 Catboy 项目",
+  "catboy.output.foundProjects": "找到 {0} 个 Catboy 项目",
+  
+  "catboy.terminal.running": "正在运行: {0}",
+  
+  "catboy.config.executablePath.description": "Catboy 可执行文件的路径。如果未指定，将使用 PATH 中的 'catboy'。",
+  "catboy.config.showYamlFiles.description": "在项目树视图中显示 build.yaml 文件条目。",
+  "catboy.config.language.description": "覆盖扩展语言设置（需要重新加载）。",
+  "catboy.config.language.auto": "自动（跟随 VS Code 语言）",
+  "catboy.config.language.english": "English",
+  "catboy.config.language.chinese": "中文(简体)",
+  
+  "catboy.languageSelector.placeholder": "为 Catboy 扩展选择语言",
+  "catboy.languageChange.message": "语言设置已更改。请重新加载窗口以完全应用所有界面元素（按钮、提示等）的更改。",
+  "catboy.languageChange.reload": "重新加载窗口",
+  "catboy.languageMismatch.message": "您的 Catboy 语言设置与 VS Code 的显示语言不同。某些界面按钮可能会显示为 VS Code 的语言，直到您重新加载窗口。",
+  "catboy.languageMismatch.configure": "配置 VS Code 语言",
+  
+  "catboy.errors.noTargetSelected": "未选择构建目标。请先选择一个构建目标。",
+  "catboy.errors.cannotFindWorkspace": "无法找到 {0} 的工作区文件夹",
+  "catboy.errors.yamlPathNotFound": "找不到构建目标 {0} 的 YAML 路径"
+}

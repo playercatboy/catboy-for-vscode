@@ -75,12 +75,22 @@ This extension contributes the following settings:
 
 * `catboy.executablePath`: Path to the Catboy executable. If not specified, the extension will use `catboy` from PATH.
 * `catboy.showYamlFiles`: Show build.yaml file entries in the project tree view (default: false). Can also be toggled via the button in the tree view header.
+* `catboy.verboseBuild`: Enable verbose build output by including the `-v` flag in catboy commands (default: true).
+* `catboy.language`: Override the extension language display (default: auto). Supports English and Simplified Chinese (zh-hans).
 
 ## Known Issues
 
 None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
+
+### 0.1.10
+
+Internationalization and verbose build configuration:
+- **Simplified Chinese Support**: Added comprehensive zh-hans translations for the entire extension interface
+- **Language Override**: Custom language selection via "Catboy: Change Language" command, independent of VS Code's system language
+- **Verbose Build Toggle**: New configurable setting to control the `-v` flag in catboy commands (defaults to enabled)
+- **Multilingual UI**: All buttons, tooltips, status messages, and error dialogs now support Chinese localization
 
 ### 0.1.9
 

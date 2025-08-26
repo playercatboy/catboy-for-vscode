@@ -4,6 +4,7 @@ import { CatboyTreeDataProvider, TargetItem, BuildFileItem, getIconForTargetType
 import { ProjectDiscovery, CatboyTarget, CatboyProject, CatboyBuildFile } from './projectDiscovery';
 import { CatboyStatusBar } from './statusBar';
 import { TerminalManager } from './terminalManager';
+import { localize } from './languageManager';
 
 function getIconNameForTargetType(targetType?: string): string {
     if (!targetType) {
@@ -106,13 +107,13 @@ export function registerCommands(
             }
 
             if (items.length === 0) {
-                vscode.window.showInformationMessage('No Catboy targets found in the workspace');
+                vscode.window.showInformationMessage(localize('catboy.quickPick.selectTarget.noTargets', 'No Catboy targets found in the workspace'));
                 return;
             }
 
             const selected = await vscode.window.showQuickPick(items, {
-                placeHolder: 'Select a Catboy target',
-                title: 'Catboy Target Selection'
+                placeHolder: localize('catboy.quickPick.selectTarget.placeholder', 'Select a Catboy target'),
+                title: localize('catboy.quickPick.selectTarget.title', 'Catboy Target Selection')
             });
 
             if (selected) {
@@ -127,7 +128,7 @@ export function registerCommands(
                         if (target) {
                             statusBar.setCurrentTarget(target);
                             treeDataProvider.setCurrentTarget(target);
-                            vscode.window.showInformationMessage(`Selected target: ${projectName}/${targetName}`);
+                            vscode.window.showInformationMessage(localize('catboy.quickPick.selectTarget.selected', 'Selected target: {0}/{1}', projectName, targetName));
                             break;
                         }
                     }
@@ -252,7 +253,7 @@ export function registerCommands(
             if (currentTarget) {
                 executeCatboyCommand('build', currentTarget, statusBar, terminalManager);
             } else {
-                vscode.window.showWarningMessage('No target selected. Please select a target first.');
+                vscode.window.showWarningMessage(localize('catboy.errors.noTargetSelected', 'No target selected. Please select a target first.'));
             }
         })
     );
@@ -263,7 +264,7 @@ export function registerCommands(
             if (currentTarget) {
                 executeCatboyCommand('clean', currentTarget, statusBar, terminalManager);
             } else {
-                vscode.window.showWarningMessage('No target selected. Please select a target first.');
+                vscode.window.showWarningMessage(localize('catboy.errors.noTargetSelected', 'No target selected. Please select a target first.'));
             }
         })
     );
@@ -274,8 +275,15 @@ export function registerCommands(
             if (currentTarget) {
                 executeCatboyCommand('rebuild', currentTarget, statusBar, terminalManager);
             } else {
-                vscode.window.showWarningMessage('No target selected. Please select a target first.');
+                vscode.window.showWarningMessage(localize('catboy.errors.noTargetSelected', 'No target selected. Please select a target first.'));
             }
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.changeLanguage', () => {
+            const languageManager = require('./languageManager').LanguageManager.getInstance();
+            languageManager.changeLanguage();
         })
     );
 }
@@ -288,18 +296,20 @@ function executeCatboyCommandForBuildFile(
 ) {
     const config = vscode.workspace.getConfiguration('catboy');
     const catboyPath = config.get<string>('executablePath') || 'catboy';
+    const verboseBuild = config.get<boolean>('verboseBuild', true);
     
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(buildFile.yamlPath));
     if (!workspaceFolder) {
-        vscode.window.showErrorMessage(`Cannot find workspace folder for ${buildFile.yamlPath}`);
+        vscode.window.showErrorMessage(localize('catboy.errors.cannotFindWorkspace', 'Cannot find workspace folder for {0}', buildFile.yamlPath));
         return;
     }
 
     statusBar.setBuildStatus(true, command);
 
     const relativeYamlPath = path.relative(workspaceFolder.uri.fsPath, buildFile.yamlPath);
+    const verboseFlag = verboseBuild ? '-v ' : '';
     // No target specified - builds all targets in the file
-    const commandLine = `${catboyPath} ${command} -v -f "${relativeYamlPath}"`;
+    const commandLine = `${catboyPath} ${command} ${verboseFlag}-f "${relativeYamlPath}"`;
     
     const terminal = terminalManager.getOrCreateTerminal(
         buildFile.projectName,
@@ -323,17 +333,19 @@ function executeCatboyCommand(
 ) {
     const config = vscode.workspace.getConfiguration('catboy');
     const catboyPath = config.get<string>('executablePath') || 'catboy';
+    const verboseBuild = config.get<boolean>('verboseBuild', true);
     
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(target.yamlPath));
     if (!workspaceFolder) {
-        vscode.window.showErrorMessage(`Cannot find workspace folder for ${target.yamlPath}`);
+        vscode.window.showErrorMessage(localize('catboy.errors.cannotFindWorkspace', 'Cannot find workspace folder for {0}', target.yamlPath));
         return;
     }
 
     statusBar.setBuildStatus(true, command);
 
     const relativeYamlPath = path.relative(workspaceFolder.uri.fsPath, target.yamlPath);
-    const commandLine = `${catboyPath} ${command} -v -f "${relativeYamlPath}" ${target.name}`;
+    const verboseFlag = verboseBuild ? '-v ' : '';
+    const commandLine = `${catboyPath} ${command} ${verboseFlag}-f "${relativeYamlPath}" ${target.name}`;
     
     const terminal = terminalManager.getOrCreateTerminal(
         target.projectName,

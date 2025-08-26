@@ -2,6 +2,30 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
+## [0.1.10] - 2025-08-26
+
+### Added
+- **Simplified Chinese Support**: Comprehensive zh-hans translations for all extension interface elements
+- **Language Override System**: Custom "Catboy: Change Language" command allows language selection independent of VS Code's system language
+- **Verbose Build Configuration**: New `catboy.verboseBuild` setting to control the `-v` flag in catboy commands (defaults to true)
+- **Internationalized Configuration**: All configuration settings now support both English and Chinese descriptions
+
+### Changed  
+- **Multilingual Interface**: All buttons, tooltips, status messages, error dialogs, and tree view elements now support Chinese localization
+- **Enhanced Language Management**: Custom LanguageManager class provides runtime language switching with placeholder replacement
+- **Configuration UI**: Extension settings panel now displays in the selected language with proper translations
+
+### Fixed
+- **Placeholder Resolution**: Fixed issues with untranslated placeholder strings showing literal "{0}" values
+- **Button Localization**: Resolved VS Code UI button translation issues by implementing multiple package.nls locale files
+- **Language Mismatch Detection**: Added detection and guidance for VS Code display language conflicts
+
+### Technical
+- Implemented custom `LanguageManager` class bypassing vscode-nls limitations for runtime language control
+- Added comprehensive translation files: `package.nls.zh-hans.json`, `package.nls.zh-cn.json`, `package.nls.zh.json`
+- Enhanced localize function with proper signature: `localize(key, defaultValue, ...args)`
+- Added language change callbacks and dynamic UI refresh system
+
 ## [0.1.9] - 2025-08-26
 
 ### Fixed
