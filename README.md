@@ -82,6 +82,14 @@ None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
 
+### 0.1.7
+
+Comprehensive workflow enhancements and navigation improvements:
+- **Go-to-File Navigation**: Jump directly to YAML files and target definitions from tree view
+- **Current Target System**: Set and visually track the active build target with green highlighting
+- **Status Bar Controls**: Quick Build/Clean/Rebuild buttons for the current target
+- **Enhanced Context Menu**: Organized right-click menu with logical command grouping
+
 ### 0.1.6
 
 Enhanced UI controls and visual improvements:

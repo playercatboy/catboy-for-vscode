@@ -2,7 +2,7 @@
   "name": "catboy-for-vscode",
   "displayName": "Catboy Build System",
   "description": "Catboy™ build system integration for VS Code.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "publisher": "playercatboy",
   "engines": {
     "vscode": "^1.74.0"
@@ -97,6 +97,30 @@
         "command": "catboy.toggleYamlFilesOff",
         "title": "Toggle YAML File Showing (OFF)",
         "icon": "$(file)"
+      },
+      {
+        "command": "catboy.goToFile",
+        "title": "Go to YAML File",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "catboy.setCurrentTarget",
+        "title": "Set as Current Target"
+      },
+      {
+        "command": "catboy.buildCurrent",
+        "title": "Build Current Target",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "catboy.cleanCurrent",
+        "title": "Clean Current Target",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "catboy.rebuildCurrent",
+        "title": "Rebuild Current Target",
+        "icon": "$(sync)"
       }
     ],
     "menus": {
@@ -147,6 +171,41 @@
           "command": "catboy.rebuild",
           "when": "view == catboyProjects && viewItem == buildFile",
           "group": "inline@3"
+        },
+        {
+          "command": "catboy.goToFile",
+          "when": "view == catboyProjects && viewItem == buildFile",
+          "group": "inline@4"
+        },
+        {
+          "command": "catboy.goToFile",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "inline@4"
+        },
+        {
+          "command": "catboy.setCurrentTarget",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "1_target"
+        },
+        {
+          "command": "catboy.goToFile",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "2_navigation"
+        },
+        {
+          "command": "catboy.build",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "3_build@1"
+        },
+        {
+          "command": "catboy.clean",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "3_build@2"
+        },
+        {
+          "command": "catboy.rebuild",
+          "when": "view == catboyProjects && viewItem == target",
+          "group": "3_build@3"
         }
       ]
     },

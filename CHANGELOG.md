@@ -2,6 +2,31 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
+## [0.1.7] - 2025-01-02
+
+### Added
+- **Go-to-File Navigation**: New button and command to open YAML files directly from tree view
+  - Opens YAML file at target definition line when clicking on target entries
+  - Opens YAML file directly when clicking on build file entries
+  - Accurate target line highlighting for multi-target YAML files
+- **Set Current Target**: Right-click context menu option to designate a target as current
+  - Visual distinction with green icon color for current target
+  - "(Current)" prefix in target description
+  - "[CURRENT TARGET]" indicator in tooltip
+- **Status Bar Build Controls**: Build/Clean/Rebuild buttons in status bar for current target
+  - Buttons appear only when a target is selected
+  - Quick access to build operations without navigating to tree view
+- **Enhanced Context Menu**: Organized right-click menu with proper grouping and separators
+
+### Changed
+- **Target Selection Behavior**: Setting current target now requires explicit right-click action (more intentional than single-click)
+- **Context Menu Organization**: Restructured with logical groups: Set Current Target | Go to YAML | Build/Clean/Rebuild
+- **Synchronized State Management**: Current target state now syncs between tree view and status bar
+
+### Fixed
+- **Multi-target Navigation**: Fixed issue where only first target in YAML file could be highlighted
+- **Target Line Detection**: Improved YAML parsing for accurate target line identification
+
 ## [0.1.6] - 2025-08-26
 
 ### Added

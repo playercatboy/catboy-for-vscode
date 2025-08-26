@@ -49,6 +49,7 @@ export function registerCommands(
         vscode.commands.registerCommand('catboy.build', (item: TargetItem | BuildFileItem) => {
             if (item instanceof TargetItem && item.target) {
                 statusBar.setCurrentTarget(item.target);
+                treeDataProvider.setCurrentTarget(item.target);
                 executeCatboyCommand('build', item.target, statusBar, terminalManager);
             } else if (item instanceof BuildFileItem && item.buildFile) {
                 executeCatboyCommandForBuildFile('build', item.buildFile, statusBar, terminalManager);
@@ -60,6 +61,7 @@ export function registerCommands(
         vscode.commands.registerCommand('catboy.clean', (item: TargetItem | BuildFileItem) => {
             if (item instanceof TargetItem && item.target) {
                 statusBar.setCurrentTarget(item.target);
+                treeDataProvider.setCurrentTarget(item.target);
                 executeCatboyCommand('clean', item.target, statusBar, terminalManager);
             } else if (item instanceof BuildFileItem && item.buildFile) {
                 executeCatboyCommandForBuildFile('clean', item.buildFile, statusBar, terminalManager);
@@ -71,6 +73,7 @@ export function registerCommands(
         vscode.commands.registerCommand('catboy.rebuild', (item: TargetItem | BuildFileItem) => {
             if (item instanceof TargetItem && item.target) {
                 statusBar.setCurrentTarget(item.target);
+                treeDataProvider.setCurrentTarget(item.target);
                 executeCatboyCommand('rebuild', item.target, statusBar, terminalManager);
             } else if (item instanceof BuildFileItem && item.buildFile) {
                 executeCatboyCommandForBuildFile('rebuild', item.buildFile, statusBar, terminalManager);
@@ -116,6 +119,7 @@ export function registerCommands(
                         const target = project.targets.find(t => t.name === targetName);
                         if (target) {
                             statusBar.setCurrentTarget(target);
+                            treeDataProvider.setCurrentTarget(target);
                             vscode.window.showInformationMessage(`Selected target: ${projectName}/${targetName}`);
                             break;
                         }
@@ -168,6 +172,105 @@ export function registerCommands(
             updateToggleContext();
         }
     });
+
+    // Register go-to-file command
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.goToFile', async (item: TargetItem | BuildFileItem) => {
+            if (item instanceof BuildFileItem) {
+                // Open the YAML file directly
+                const document = await vscode.workspace.openTextDocument(item.buildFile.yamlPath);
+                await vscode.window.showTextDocument(document);
+            } else if (item instanceof TargetItem) {
+                // Open the YAML file and highlight the target definition line
+                const document = await vscode.workspace.openTextDocument(item.target.yamlPath);
+                const editor = await vscode.window.showTextDocument(document);
+                
+                // Find the target definition line
+                const targetName = item.target.name;
+                const text = document.getText();
+                const lines = text.split('\n');
+                
+                // Look for the specific target definition line (e.g., "  target-name:" under targets section)
+                let targetLineIndex = -1;
+                let inTargetsSection = false;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const trimmedLine = line.trim();
+                    
+                    // Check if we're entering the targets section
+                    if (trimmedLine === 'targets:') {
+                        inTargetsSection = true;
+                        continue;
+                    }
+                    
+                    // If we're in targets section and find our specific target
+                    if (inTargetsSection && trimmedLine === `${targetName}:`) {
+                        targetLineIndex = i;
+                        break;
+                    }
+                    
+                    // If we hit another top-level section (no indentation), exit targets
+                    if (inTargetsSection && trimmedLine && !line.startsWith(' ') && !line.startsWith('\t') && trimmedLine.includes(':') && trimmedLine !== 'targets:') {
+                        inTargetsSection = false;
+                    }
+                }
+                
+                // Highlight the target line if found
+                if (targetLineIndex >= 0) {
+                    const position = new vscode.Position(targetLineIndex, 0);
+                    const range = new vscode.Range(position, position.with(undefined, lines[targetLineIndex].length));
+                    editor.selection = new vscode.Selection(range.start, range.end);
+                    editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+                }
+            }
+        })
+    );
+
+    // Register set current target command for double-click functionality
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.setCurrentTarget', (item: TargetItem) => {
+            if (item instanceof TargetItem && item.target) {
+                statusBar.setCurrentTarget(item.target);
+                treeDataProvider.setCurrentTarget(item.target);
+                vscode.window.showInformationMessage(`Set current target: ${item.target.projectName}/${item.target.name}`);
+            }
+        })
+    );
+
+    // Register status bar build commands
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.buildCurrent', () => {
+            const currentTarget = treeDataProvider.getCurrentTarget();
+            if (currentTarget) {
+                executeCatboyCommand('build', currentTarget, statusBar, terminalManager);
+            } else {
+                vscode.window.showWarningMessage('No target selected. Please select a target first.');
+            }
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.cleanCurrent', () => {
+            const currentTarget = treeDataProvider.getCurrentTarget();
+            if (currentTarget) {
+                executeCatboyCommand('clean', currentTarget, statusBar, terminalManager);
+            } else {
+                vscode.window.showWarningMessage('No target selected. Please select a target first.');
+            }
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.rebuildCurrent', () => {
+            const currentTarget = treeDataProvider.getCurrentTarget();
+            if (currentTarget) {
+                executeCatboyCommand('rebuild', currentTarget, statusBar, terminalManager);
+            } else {
+                vscode.window.showWarningMessage('No target selected. Please select a target first.');
+            }
+        })
+    );
 }
 
 function executeCatboyCommandForBuildFile(

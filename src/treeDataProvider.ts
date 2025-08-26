@@ -8,6 +8,7 @@ export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyIte
 
     private projects: CatboyProject[] = [];
     private showYamlFiles: boolean = false;
+    private currentTarget: CatboyTarget | undefined;
 
     constructor(private projectDiscovery: ProjectDiscovery) {
         this.showYamlFiles = vscode.workspace.getConfiguration('catboy').get('showYamlFiles', false);
@@ -45,12 +46,12 @@ export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyIte
             } else {
                 // Skip build files level and show targets directly when disabled
                 return Promise.resolve(
-                    element.project.targets.map(target => new TargetItem(target))
+                    element.project.targets.map(target => new TargetItem(target, this.isCurrentTarget(target)))
                 );
             }
         } else if (element instanceof BuildFileItem) {
             return Promise.resolve(
-                element.buildFile.targets.map(target => new TargetItem(target))
+                element.buildFile.targets.map(target => new TargetItem(target, this.isCurrentTarget(target)))
             );
         }
         return Promise.resolve([]);
@@ -64,6 +65,21 @@ export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyIte
     
     isShowingYamlFiles(): boolean {
         return this.showYamlFiles;
+    }
+
+    setCurrentTarget(target: CatboyTarget | undefined): void {
+        this.currentTarget = target;
+        this._onDidChangeTreeData.fire();
+    }
+
+    getCurrentTarget(): CatboyTarget | undefined {
+        return this.currentTarget;
+    }
+
+    private isCurrentTarget(target: CatboyTarget): boolean {
+        return this.currentTarget?.name === target.name && 
+               this.currentTarget?.projectName === target.projectName && 
+               this.currentTarget?.yamlPath === target.yamlPath;
     }
 
     getParent(element: CatboyItem): vscode.ProviderResult<CatboyItem> {
@@ -206,23 +222,44 @@ export function getIconForTargetType(targetType?: string): vscode.ThemeIcon {
 
 export class TargetItem extends CatboyItem {
     constructor(
-        public readonly target: CatboyTarget
+        public readonly target: CatboyTarget,
+        private readonly isCurrent: boolean = false
     ) {
         super(target.name, vscode.TreeItemCollapsibleState.None);
         
-        // Add dimmed target type text (similar to build.yaml filename)
+        // Add dimmed target type text and current status
         const displayTypeName = getTargetTypeDisplayName(target.targetType);
-        if (displayTypeName) {
-            this.description = displayTypeName;
+        let description = '';
+        
+        if (this.isCurrent) {
+            description = '(Current) ';
         }
         
-        // Set tooltip with target type info
+        if (displayTypeName) {
+            description += displayTypeName;
+        }
+        
+        if (description) {
+            this.description = description;
+        }
+        
+        // Set tooltip with target type info and current status
         const typeInfo = target.targetType ? `\nType: ${target.targetType}` : '';
-        this.tooltip = `Target: ${target.name}\nProject: ${target.projectName}${typeInfo}\nConfig: ${target.yamlPath}`;
+        const currentStatus = this.isCurrent ? '\n[CURRENT TARGET]' : '';
+        this.tooltip = `Target: ${target.name}\nProject: ${target.projectName}${typeInfo}${currentStatus}\nConfig: ${target.yamlPath}`;
         this.contextValue = 'target';
         
-        // Select icon based on target type
-        this.iconPath = getIconForTargetType(target.targetType);
+        // Select icon based on target type with current target styling
+        if (this.isCurrent) {
+            // Use green color for current target icon
+            const baseIcon = getIconForTargetType(target.targetType);
+            this.iconPath = new vscode.ThemeIcon(baseIcon.id, new vscode.ThemeColor('charts.green'));
+            
+            // Make the label bold for current target
+            this.resourceUri = vscode.Uri.parse(`catboy://current-target/${target.name}`);
+        } else {
+            this.iconPath = getIconForTargetType(target.targetType);
+        }
     }
     
 }
