@@ -2,7 +2,7 @@
   "name": "catboy-for-vscode",
   "displayName": "Catboy Build System",
   "description": "Catboy™ build system integration for VS Code.",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publisher": "playercatboy",
   "engines": {
     "vscode": "^1.74.0"
@@ -58,7 +58,7 @@
       {
         "command": "catboy.build",
         "title": "Build",
-        "icon": "$(gear)"
+        "icon": "$(tools)"
       },
       {
         "command": "catboy.clean",
@@ -79,6 +79,24 @@
         "command": "catboy.showOutput",
         "title": "Catboy: Show Output",
         "category": "Catboy"
+      },
+      {
+        "command": "catboy.toggleYamlFiles",
+        "title": "Toggle YAML File Showing",
+        "icon": {
+          "light": "$(file)",
+          "dark": "$(file)"
+        }
+      },
+      {
+        "command": "catboy.toggleYamlFilesOn",
+        "title": "Toggle YAML File Showing (ON)",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "catboy.toggleYamlFilesOff",
+        "title": "Toggle YAML File Showing (OFF)",
+        "icon": "$(file)"
       }
     ],
     "menus": {
@@ -86,7 +104,17 @@
         {
           "command": "catboy.refresh",
           "when": "view == catboyProjects",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "catboy.toggleYamlFilesOn",
+          "when": "view == catboyProjects && catboy.showYamlFiles",
+          "group": "navigation@2"
+        },
+        {
+          "command": "catboy.toggleYamlFilesOff",
+          "when": "view == catboyProjects && !catboy.showYamlFiles",
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [
@@ -129,6 +157,11 @@
           "type": "string",
           "default": "",
           "description": "Path to the Catboy executable. If not specified, 'catboy' will be used from PATH."
+        },
+        "catboy.showYamlFiles": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show build.yaml file entries in the project tree view."
         }
       }
     }

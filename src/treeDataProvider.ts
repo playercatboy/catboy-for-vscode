@@ -7,9 +7,19 @@ export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyIte
     readonly onDidChangeTreeData: vscode.Event<CatboyItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
     private projects: CatboyProject[] = [];
+    private showYamlFiles: boolean = false;
 
     constructor(private projectDiscovery: ProjectDiscovery) {
+        this.showYamlFiles = vscode.workspace.getConfiguration('catboy').get('showYamlFiles', false);
         this.refresh();
+        
+        // Listen for configuration changes
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration('catboy.showYamlFiles')) {
+                this.showYamlFiles = vscode.workspace.getConfiguration('catboy').get('showYamlFiles', false);
+                this.refresh();
+            }
+        });
     }
 
     async refresh(): Promise<void> {
@@ -27,9 +37,17 @@ export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyIte
                 this.projects.map(project => new ProjectItem(project))
             );
         } else if (element instanceof ProjectItem) {
-            return Promise.resolve(
-                element.project.buildFiles.map(buildFile => new BuildFileItem(buildFile))
-            );
+            if (this.showYamlFiles) {
+                // Show build files level when enabled
+                return Promise.resolve(
+                    element.project.buildFiles.map(buildFile => new BuildFileItem(buildFile))
+                );
+            } else {
+                // Skip build files level and show targets directly when disabled
+                return Promise.resolve(
+                    element.project.targets.map(target => new TargetItem(target))
+                );
+            }
         } else if (element instanceof BuildFileItem) {
             return Promise.resolve(
                 element.buildFile.targets.map(target => new TargetItem(target))
@@ -37,13 +55,29 @@ export class CatboyTreeDataProvider implements vscode.TreeDataProvider<CatboyIte
         }
         return Promise.resolve([]);
     }
+    
+    toggleYamlFiles(): void {
+        this.showYamlFiles = !this.showYamlFiles;
+        const config = vscode.workspace.getConfiguration('catboy');
+        config.update('showYamlFiles', this.showYamlFiles, vscode.ConfigurationTarget.Global);
+    }
+    
+    isShowingYamlFiles(): boolean {
+        return this.showYamlFiles;
+    }
 
     getParent(element: CatboyItem): vscode.ProviderResult<CatboyItem> {
         if (element instanceof TargetItem) {
             const project = this.projects.find(p => p.name === element.target.projectName);
             if (project) {
-                const buildFile = project.buildFiles.find(bf => bf.yamlPath === element.target.yamlPath);
-                return buildFile ? new BuildFileItem(buildFile) : undefined;
+                if (this.showYamlFiles) {
+                    // When showing YAML files, parent is the build file
+                    const buildFile = project.buildFiles.find(bf => bf.yamlPath === element.target.yamlPath);
+                    return buildFile ? new BuildFileItem(buildFile) : undefined;
+                } else {
+                    // When not showing YAML files, parent is the project
+                    return new ProjectItem(project);
+                }
             }
         } else if (element instanceof BuildFileItem) {
             const project = this.projects.find(p => p.name === element.buildFile.projectName);
@@ -67,9 +101,16 @@ export class ProjectItem extends CatboyItem {
         public readonly project: CatboyProject
     ) {
         super(project.name, vscode.TreeItemCollapsibleState.Expanded);
-        this.tooltip = `Project: ${project.name}`;
+        
+        // Add target count to description for additional context
+        const targetCount = project.targets.length;
+        this.description = `${targetCount} target${targetCount !== 1 ? 's' : ''}`;
+        
+        this.tooltip = `Project: ${project.name}\nTargets: ${targetCount}`;
         this.contextValue = 'project';
-        this.iconPath = new vscode.ThemeIcon('folder');
+        
+        // Use a more prominent icon with color for projects
+        this.iconPath = new vscode.ThemeIcon('folder-library', new vscode.ThemeColor('charts.blue'));
     }
 }
 
@@ -148,7 +189,7 @@ export function getIconForTargetType(targetType?: string): vscode.ThemeIcon {
         case 'sll':
         case 'static_library':
         case 'static_linked_library':
-            return new vscode.ThemeIcon('archive'); // Archive/box icon for static libraries
+            return new vscode.ThemeIcon('file-zip'); // Archive icon for static libraries
         
         case 'obj':
         case 'object_files':

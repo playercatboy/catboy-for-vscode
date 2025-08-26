@@ -130,6 +130,44 @@ export function registerCommands(
             projectDiscovery.showOutput();
         })
     );
+    
+    // Function to update the context for conditional menu visibility
+    function updateToggleContext() {
+        const isShowing = treeDataProvider.isShowingYamlFiles();
+        vscode.commands.executeCommand('setContext', 'catboy.showYamlFiles', isShowing);
+    }
+    
+    // Register the toggle YAML files commands (both ON and OFF states)
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.toggleYamlFiles', () => {
+            treeDataProvider.toggleYamlFiles();
+            updateToggleContext();
+        })
+    );
+    
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.toggleYamlFilesOn', () => {
+            treeDataProvider.toggleYamlFiles();
+            updateToggleContext();
+        })
+    );
+    
+    context.subscriptions.push(
+        vscode.commands.registerCommand('catboy.toggleYamlFilesOff', () => {
+            treeDataProvider.toggleYamlFiles();
+            updateToggleContext();
+        })
+    );
+    
+    // Initialize the context state
+    updateToggleContext();
+    
+    // Listen for configuration changes to update context
+    vscode.workspace.onDidChangeConfiguration(e => {
+        if (e.affectsConfiguration('catboy.showYamlFiles')) {
+            updateToggleContext();
+        }
+    });
 }
 
 function executeCatboyCommandForBuildFile(

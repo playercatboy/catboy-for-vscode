@@ -74,12 +74,21 @@ Each target in the tree view provides three action buttons:
 This extension contributes the following settings:
 
 * `catboy.executablePath`: Path to the Catboy executable. If not specified, the extension will use `catboy` from PATH.
+* `catboy.showYamlFiles`: Show build.yaml file entries in the project tree view (default: false). Can also be toggled via the button in the tree view header.
 
 ## Known Issues
 
 None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
+
+### 0.1.6
+
+Enhanced UI controls and visual improvements:
+- **Toggle YAML files**: New button to show/hide build.yaml entries in tree view
+- **Configurable display**: Persistent setting for YAML file visibility (default: hidden)
+- **Better visual hierarchy**: Projects use blue folder icons with target counts
+- **Improved icons**: Updated build button (tools) and static library (file-zip) icons
 
 ### 0.1.5
 

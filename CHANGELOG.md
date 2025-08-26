@@ -2,6 +2,27 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
+## [0.1.6] - 2025-08-26
+
+### Added
+- **Toggle YAML Files**: New toggle button to show/hide build.yaml file entries in tree view
+- **Persistent Settings**: New `catboy.showYamlFiles` configuration option (defaults to false)
+- **Project Target Count**: Shows number of targets in project description
+- **Visual Hierarchy**: Blue colored folder icon for projects to distinguish from targets
+
+### Changed
+- **Build Button Icon**: Changed from gear to tools icon to avoid confusion with executable icon
+- **Static Library Icon**: Updated to file-zip icon for better representation
+- **Project Appearance**: Projects now use folder-library icon with blue color for prominence
+- **Dynamic Tree Structure**: Tree view adapts based on YAML files visibility setting
+
+### Fixed
+- **Icon Consistency**: All target type icons now use consistent neutral coloring
+
+### Technical
+- Added context-based menu visibility for toggle button icons
+- Improved tree view parent-child relationship handling for both display modes
+
 ## [0.1.5] - 2025-08-26
 
 ### Added
