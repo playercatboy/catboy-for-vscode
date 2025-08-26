@@ -2,7 +2,22 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
-## [0.1.7] - 2025-01-02
+## [0.1.8] - 2025-08-26
+
+### Added
+- **New Cat Icon**: Replaced generic gear icon with custom cat SVG for better brand identity
+- **Theme-Adaptive Design**: Monotone cat icon optimized for VS Code's light and dark themes
+- **Proper Attribution**: Added CC Attribution License for cat icon sourced from SVG Repo
+
+### Changed
+- **Activity Bar Icon**: Updated from gear icon to themed cat icon for improved visual identity
+- **Resource Cleanup**: Removed unused SVG files to reduce extension size
+
+### Technical
+- Implemented monotone SVG versions for light (#424242) and dark (#C5C5C5) VS Code themes
+- Added proper icon attribution documentation in README.md
+
+## [0.1.7] - 2025-08-26
 
 ### Added
 - **Go-to-File Navigation**: New button and command to open YAML files directly from tree view

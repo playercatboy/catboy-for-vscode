@@ -82,6 +82,14 @@ None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
 
+### 0.1.8
+
+Enhanced activity bar icon and attribution:
+- **New Cat Icon**: Replaced generic gear icon with custom cat SVG for better brand identity
+- **Theme-Adaptive Design**: Monotone cat icon optimized for VS Code's light and dark themes
+- **Resource Cleanup**: Removed unused SVG files to reduce extension size
+- **Proper Attribution**: Added CC Attribution License for cat icon sourced from SVG Repo
+
 ### 0.1.7
 
 Comprehensive workflow enhancements and navigation improvements:
@@ -233,3 +241,7 @@ Contributions are welcome! Please feel free to submit issues and pull requests o
 ## License
 
 This extension is licensed under the MIT License. See the LICENSE file for details.
+
+### Icon Attribution
+
+The cat icon used in this extension is sourced from [SVG Repo](https://www.svgrepo.com/svg/524392/cat) and is licensed under CC Attribution License.
