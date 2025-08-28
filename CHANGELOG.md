@@ -2,6 +2,51 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
+## [0.2.0] - 2025-08-28
+
+### Added
+- **YAML Pre-processor (YPP) Support**: Complete integration with Catboy's YPP module for split YAML configurations
+  - Automatic detection and processing of `$include` directives in build.yaml files
+  - Intelligent target discovery using flattened.json metadata with original source location tracking
+  - Support for all three YPP include patterns: inline targets, build content includes, and whole target includes
+- **Enhanced Go-to-File Navigation**: Navigate directly to original YAML files where targets were defined
+  - Uses original file paths and line numbers from YPP metadata when available
+  - Falls back to main build.yaml for projects not using YPP
+  - Precise line highlighting for target definitions across split files
+- **Automatic YPP Processing**: Extension automatically runs `catboy ypp -f build.yaml` when needed
+  - Processes YPP on extension startup for all detected build.yaml files
+  - Intelligent file watching automatically re-processes YPP when YAML files change
+  - Graceful fallback to direct YAML parsing if YPP is unavailable or fails
+- **YPP Test Project**: Comprehensive sample project demonstrating all YPP include patterns
+  - Pattern 1: Full targets with no includes
+  - Pattern 2: Targets with build content included from separate files
+  - Pattern 3: Whole targets included from separate files
+
+### Changed
+- **Project Discovery Architecture**: Completely redesigned to support YPP integration
+  - Extended `CatboyTarget` interface with `originalFilePath` and `originalLineNumber` properties
+  - Added `YppTarget` and `YppMetadata` interfaces for flattened.json structure
+  - Modified parsing logic to prefer YPP data over direct YAML parsing
+- **File Watching System**: Replaced simple file watcher with YPP-aware watching
+  - Automatically triggers YPP processing on build.yaml file changes
+  - Smarter refresh logic that handles split YAML configurations
+- **Target Selection Icons**: Fixed icon consistency between project tree view and target selection popup
+  - Static library targets now use consistent `file-zip` icon across all interfaces
+
+### Fixed
+- **Icon Consistency**: Target selection popup now uses identical icons as project tree view
+- **Original Source Navigation**: Go-to-file functionality now correctly navigates to original YAML files in split configurations
+
+### Technical
+- **Zero External Dependencies**: YPP integration implemented without additional runtime dependencies
+- **Backward Compatibility**: Maintains full compatibility with projects not using YPP
+- **Comprehensive Error Handling**: Robust fallback mechanisms ensure extension works even if YPP fails
+- **Performance Optimized**: YPP processing runs asynchronously without blocking extension activation
+
+### Packaging
+- **Reduced Extension Size**: Sample directory now excluded from VSIX packaging
+- **Build Directory Management**: Sample build directories added to gitignore to prevent artifact tracking
+
 ## [0.1.10] - 2025-08-26
 
 ### Added

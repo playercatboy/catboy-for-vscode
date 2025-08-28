@@ -5,13 +5,16 @@ A Visual Studio Code extension that provides build system integration for the Ca
 ## Features
 
 - **Project Discovery**: Automatically discovers Catboy projects in your workspace by scanning for `build.yaml` files
+- **YAML Pre-processor (YPP) Support**: Full integration with Catboy's YPP module for split YAML configurations using `$include` directives
 - **Tree View Interface**: Displays all projects and their targets in a hierarchical tree view
+- **Enhanced Navigation**: Go-to-file functionality navigates to original YAML files where targets were defined, even in split configurations
 - **Build Actions**: Quick access buttons for build, clean, and rebuild operations
 - **Terminal Integration**: Executes Catboy commands directly in the VS Code integrated terminal
 - **Status Bar Integration**: Shows current target and build progress in the status bar
 - **Error Handling**: Comprehensive validation and error reporting for build.yaml files
 - **Command Palette**: Quick target selection and output viewing via command palette
 - **Smart Terminal Management**: Reuses terminals per target for better organization
+- **Automatic YPP Processing**: Intelligently processes YPP when YAML files change, with graceful fallback
 
 ## Requirements
 
@@ -54,6 +57,39 @@ targets:
         c: -Wall -Wextra -g
 ```
 
+### YPP (YAML Pre-processor) Support
+
+The extension fully supports Catboy's YPP module for split YAML configurations. You can use `$include` directives to organize your build configurations across multiple files:
+
+```yaml
+name: my-project
+
+# Include platform configurations
+platforms:
+  $include: platforms/*.yaml
+
+targets:
+  # Pattern 1: Full target definition (no includes)
+  simple-app:
+    build:
+      type: executable
+      sources:
+        c: ["src/main.c"]
+  
+  # Pattern 2: Target with build content included
+  complex-app:
+    build:
+      type: executable
+      $include: configs/complex-build.yaml
+      sources:
+        c: ["src/main.c", "src/utils.c"]
+  
+  # Pattern 3: Whole targets included from separate files
+  $include: targets/library-targets.yaml
+```
+
+The extension automatically runs `catboy ypp` to process includes and uses the generated metadata for precise navigation to original source files.
+
 ### Available Actions
 
 Each target in the tree view provides three action buttons:
@@ -83,6 +119,16 @@ This extension contributes the following settings:
 None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
+
+### 0.2.0
+
+YAML Pre-processor (YPP) support and enhanced navigation:
+- **YPP Integration**: Complete support for Catboy's YAML pre-processor with `$include` directives for split configurations
+- **Enhanced Go-to-File**: Navigate directly to original YAML files where targets were defined, even across split files
+- **Automatic YPP Processing**: Intelligent processing and file watching with graceful fallback for projects not using YPP
+- **YPP Test Project**: Comprehensive sample demonstrating all three YPP include patterns
+- **Icon Consistency**: Fixed target selection popup icons to match project tree view
+- **Packaging Improvements**: Reduced extension size by excluding sample directory from distribution
 
 ### 0.1.10
 

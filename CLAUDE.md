@@ -43,6 +43,8 @@ npm run lint
 2. **Project Discovery**: Scans workspace for `build.yaml` files and extracts:
    - Project name from the `name` property
    - Targets from the `targets` section
+   - **YPP Integration**: Automatically processes YAML Pre-processor includes using `catboy ypp` command
+   - **Original Source Tracking**: Uses flattened.json metadata for precise navigation to original YAML files
 
 3. **UI Components**:
    - **Activity Bar Icon**: Custom "Catboy" icon in the VSCode activity bar
@@ -57,18 +59,21 @@ npm run lint
    - Rebuild: `catboy rebuild [-v] -f <yaml-file>` (verbose flag configurable via `catboy.verboseBuild` setting)
 
 5. **Enhanced Features**:
+   - **YPP Support**: Complete YAML Pre-processor integration for split YAML configurations using `$include` directives
+   - **Enhanced Navigation**: Go-to-file functionality navigates to original YAML files where targets were defined
+   - **Automatic YPP Processing**: Intelligent YPP processing with file watching and graceful fallback
    - **Internationalization**: Comprehensive Simplified Chinese (zh-hans) support with runtime language switching
    - **Error Handling**: Comprehensive YAML validation with user-friendly error messages
    - **Terminal Management**: Smart reuse of terminals per target
    - **Command Palette**: Quick target selection via "Catboy: Select Target"
-   - **File Watching**: Auto-refresh on build.yaml changes
+   - **File Watching**: Auto-refresh on build.yaml changes with YPP re-processing
    - **Language Override**: Custom language selection independent of VS Code system settings
 
 ### Key Implementation Areas
 
 - **src/extension.ts**: Extension entry point and activation logic
 - **src/treeDataProvider.ts**: Tree view implementation for project/target display
-- **src/projectDiscovery.ts**: Logic for finding and parsing build.yaml files with comprehensive error handling
+- **src/projectDiscovery.ts**: Logic for finding and parsing build.yaml files with comprehensive error handling and YPP integration
 - **src/commands.ts**: Command handlers for build/clean/rebuild operations with status integration and configurable verbose flag
 - **src/statusBar.ts**: Status bar integration showing current target and build progress
 - **src/terminalManager.ts**: Smart terminal management with reuse per target
@@ -101,10 +106,47 @@ targets:
         c: compiler flags
 ```
 
+### YPP (YAML Pre-processor) Support
+
+The extension fully supports split YAML configurations using `$include` directives:
+
+```yaml
+name: project-name
+
+# Include platform configurations
+platforms:
+  $include: platforms/*.yaml
+
+targets:
+  # Pattern 1: Full target (no includes)
+  simple-target:
+    build:
+      type: executable
+      sources: ["src/main.c"]
+  
+  # Pattern 2: Target with build content included
+  complex-target:
+    build:
+      type: executable
+      $include: configs/complex-build.yaml
+      sources: ["src/main.c"]
+  
+  # Pattern 3: Whole targets included
+  $include: targets/library-targets.yaml
+```
+
+The extension automatically:
+- Runs `catboy ypp -f build.yaml` to process includes
+- Uses `build/flattened.json` metadata for target discovery
+- Provides precise navigation to original YAML files
+- Falls back to direct parsing if YPP is unavailable
+
 ## Testing
 
 ### Development Testing
-Press **F5** to launch Extension Development Host and test with the sample project in `sample/` folder.
+Press **F5** to launch Extension Development Host and test with the sample projects in `sample/` folder:
+- Basic projects: `app-project/`, `lib-project/`, `kernel-project/`
+- **YPP test project**: `ypp-test-project/` - demonstrates all three YPP include patterns
 
 ### Mock Testing
 Use `sample/mock-catboy.bat` (Windows) or `sample/mock-catboy.sh` (Unix) as executable path for testing without installing Catboy.
@@ -117,6 +159,7 @@ Run `npm test` for the complete test suite.
 ✅ **Complete Implementation** - All core features and enhancements have been implemented and tested.
 
 ### Version History
+- **v0.2.0**: Complete YPP (YAML Pre-processor) integration for split YAML configurations with enhanced go-to-file navigation
 - **v0.1.10**: Added comprehensive Simplified Chinese (zh-hans) internationalization support and configurable verbose build setting
 - **v0.1.9**: Enhanced target selection with friendly type names and current target indicators
 - **v0.1.8**: Custom cat icon for activity bar with theme adaptation
