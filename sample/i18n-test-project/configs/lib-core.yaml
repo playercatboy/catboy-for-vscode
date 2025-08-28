@@ -1,0 +1,5 @@
+# First lib-* file for quoted multi-file test
+defines: ["LIB_CORE=1"]
+includes: ["../include/core"]
+flags:
+  c: ["-fPIC"]

@@ -1,0 +1,6 @@
+# Single file for testing single-file CodeLens
+includes: ["../include"]
+defines: ["SINGLE_TARGET=1"]
+flags:
+  c: ["-O2", "-Wall"]
+links: ["m"]

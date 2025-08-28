@@ -1,0 +1,70 @@
+name: i18n-test-project
+
+# Test project specifically designed to test CodeLens internationalization
+# This file contains various $include patterns to test all translation scenarios:
+# 1. Single file includes (should show "📄 Open YAML File")
+# 2. Multiple file includes (should show "📁 X files (click to choose)")
+# 3. Missing/broken includes (should show "⚠️ File not found")
+# 4. Different path formats and edge cases
+
+targets:
+  # Test case 1: Single file include - should show "📄 Open YAML File" / "📄 打开 YAML 文件"
+  single-file-test:
+    build:
+      type: executable
+      $include: configs/single-target.yaml
+      sources:
+        c: ["src/main.c"]
+
+  # Test case 2: Multiple files with glob pattern - should show "📁 2 files (click to choose)" / "📁 2 个文件（点击选择）"
+  multi-file-test:
+    build:
+      type: executable
+      $include: configs/multi-*.yaml
+      sources:
+        c: ["src/multi.c"]
+
+  # Test case 3: Missing file - should show "⚠️ File not found" / "⚠️ 文件未找到"
+  missing-file-test:
+    build:
+      type: executable
+      $include: configs/nonexistent-file.yaml
+      sources:
+        c: ["src/missing.c"]
+
+  # Test case 4: Multiple specific files - should show "📁 3 files (click to choose)" / "📁 3 个文件（点击选择）"
+  specific-multi-test:
+    build:
+      type: executable
+      $include: ["configs/debug.yaml", "configs/release.yaml", "configs/test.yaml"]
+      sources:
+        c: ["src/specific.c"]
+
+# Test case 5: Top-level include - should work with all translation scenarios
+$include: targets/external-targets.yaml
+
+# Test case 6: Various path formats
+extra-tests:
+  # Quoted path - single file
+  quoted-single:
+    build:
+      type: executable
+      $include: "configs/quoted-single.yaml"
+      sources:
+        c: ["src/quoted.c"]
+
+  # Quoted glob - multiple files
+  quoted-multi:
+    build:
+      type: executable  
+      $include: "configs/lib-*.yaml"
+      sources:
+        c: ["src/lib.c"]
+
+  # Path with spaces - missing file test
+  spaces-missing:
+    build:
+      type: executable
+      $include: "configs/file with spaces.yaml"
+      sources:
+        c: ["src/spaces.c"]

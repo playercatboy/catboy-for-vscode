@@ -1,0 +1,3 @@
+# Configuration for compact formatting test
+defines: ["COMPACT_FORMAT=1"]
+flags: { c: ["-Wall", "-DCOMPACT"] }

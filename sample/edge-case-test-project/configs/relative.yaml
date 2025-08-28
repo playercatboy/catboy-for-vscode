@@ -1,0 +1,5 @@
+# File for testing relative path traversal
+defines: ["RELATIVE_PATH=1"]
+includes: ["../include"]
+flags:
+  c: ["-Wall", "-DRELATIVE_ACCESS"]

@@ -1,0 +1,4 @@
+# Second valid file for mixed includes test  
+defines: ["VALID2=1"]
+flags:
+  c: ["-Wall", "-O2"]

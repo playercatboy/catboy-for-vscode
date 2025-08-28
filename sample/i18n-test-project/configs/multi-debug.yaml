@@ -1,0 +1,5 @@
+# First file matching multi-* pattern
+includes: ["../include"]
+defines: ["DEBUG=1", "MULTI_BUILD=1"]
+flags:
+  c: ["-g", "-Wall", "-Wextra"]

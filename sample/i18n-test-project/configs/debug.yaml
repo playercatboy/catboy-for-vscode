@@ -1,0 +1,4 @@
+# Debug configuration for specific multi-test
+defines: ["DEBUG=1"]
+flags:
+  c: ["-g", "-O0"]

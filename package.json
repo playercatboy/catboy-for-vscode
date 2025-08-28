@@ -229,10 +229,14 @@
         },
         "catboy.language": {
           "type": "string",
-          "enum": ["auto", "en", "zh-hans"],
+          "enum": [
+            "auto",
+            "en",
+            "zh-hans"
+          ],
           "enumDescriptions": [
             "%catboy.config.language.auto%",
-            "%catboy.config.language.english%", 
+            "%catboy.config.language.english%",
             "%catboy.config.language.chinese%"
           ],
           "default": "auto",
@@ -256,7 +260,7 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/glob": "^8.0.0",
+    "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
     "@types/vscode": "^1.74.0",

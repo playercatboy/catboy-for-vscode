@@ -1,0 +1,5 @@
+# Second lib-* file for quoted multi-file test
+defines: ["LIB_UTILS=1"]
+includes: ["../include/utils"]
+flags:
+  c: ["-fPIC", "-O2"]

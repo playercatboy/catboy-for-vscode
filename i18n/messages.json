@@ -88,5 +88,13 @@
   
   "catboy.errors.noTargetSelected": "No target selected. Please select a target first.",
   "catboy.errors.cannotFindWorkspace": "Cannot find workspace folder for {0}",
-  "catboy.errors.yamlPathNotFound": "YAML path not found for target: {0}"
+  "catboy.errors.yamlPathNotFound": "YAML path not found for target: {0}",
+  
+  "catboy.include.openYamlFile": "Open YAML File",
+  "catboy.include.multipleFiles": "{0} files (click to choose)",
+  "catboy.include.fileNotFound": "File not found",
+  "catboy.include.hover.fileNotFound": "**$include**: `{0}`\n\n⚠️ **File not found**",
+  "catboy.include.hover.resolvedFiles": "**$include**: `{0}`\n\n**Resolved files:**\n{1}\n\n*Click to open file*",
+  "catboy.include.quickPick.selectFile": "Select file to open",
+  "catboy.include.decoration.goToFiles": "Go to included file(s): {0}"
 }

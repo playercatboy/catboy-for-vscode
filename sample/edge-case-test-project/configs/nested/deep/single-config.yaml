@@ -1,0 +1,5 @@
+# Deep nested configuration file
+defines: ["DEEP_NESTED=1"]
+includes: ["../../../../include"]
+flags:
+  c: ["-Wall", "-DDEEP_PATH"]

@@ -1,0 +1,20 @@
+# External target definitions for top-level $include testing
+external-app:
+  build:
+    type: executable
+    includes: ["../include"]
+    defines: ["EXTERNAL_APP=1"]
+    sources:
+      c: ["../src/external.c"]
+    flags:
+      c: ["-Wall", "-Wextra"]
+
+external-lib:
+  build:
+    type: static_library
+    includes: ["../include"]  
+    defines: ["EXTERNAL_LIB=1"]
+    sources:
+      c: ["../src/external_lib.c"]
+    flags:
+      c: ["-Wall", "-fPIC"]

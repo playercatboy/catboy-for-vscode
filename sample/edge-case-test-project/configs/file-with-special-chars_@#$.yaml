@@ -1,0 +1,4 @@
+# File with special characters in name
+defines: ["SPECIAL_CHARS=1"]
+flags:
+  c: ["-Wall", "-DSPECIAL_FILE_NAME"]

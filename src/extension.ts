@@ -4,7 +4,8 @@ import { registerCommands } from './commands';
 import { ProjectDiscovery } from './projectDiscovery';
 import { CatboyStatusBar } from './statusBar';
 import { TerminalManager } from './terminalManager';
-import { LanguageManager } from './languageManager';
+import { LanguageManager, localize } from './languageManager';
+import { IncludeProvider } from './includeProvider';
 
 export function activate(context: vscode.ExtensionContext) {
     try {
@@ -17,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
         const treeDataProvider = new CatboyTreeDataProvider(projectDiscovery);
         const statusBar = new CatboyStatusBar();
         const terminalManager = new TerminalManager();
+        const includeProvider = new IncludeProvider();
         
         // Set up the refresh callback for the project discovery file watcher
         projectDiscovery.setRefreshCallback(() => treeDataProvider.refresh());
@@ -28,11 +30,45 @@ export function activate(context: vscode.ExtensionContext) {
         });
 
         context.subscriptions.push(treeView);
+        
+        // Register include provider for YAML files
+        console.log('Registering include providers...');
+        const yamlSelector: vscode.DocumentSelector = { scheme: 'file', language: 'yaml' };
+        context.subscriptions.push(
+            vscode.languages.registerCodeLensProvider(yamlSelector, includeProvider),
+            vscode.languages.registerHoverProvider(yamlSelector, includeProvider),
+            vscode.languages.registerDefinitionProvider(yamlSelector, includeProvider)
+        );
+        
+        // Register command for opening include files when multiple matches
+        context.subscriptions.push(
+            vscode.commands.registerCommand('catboy.openIncludeFile', async (filePaths: string[]) => {
+                if (filePaths.length === 1) {
+                    await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePaths[0]));
+                } else {
+                    const items = filePaths.map(filePath => ({
+                        label: vscode.workspace.asRelativePath(filePath),
+                        description: filePath,
+                        filePath: filePath
+                    }));
+                    
+                    const selected = await vscode.window.showQuickPick(items, {
+                        placeHolder: localize('catboy.include.quickPick.selectFile', 'Select file to open')
+                    });
+                    
+                    if (selected) {
+                        await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(selected.filePath));
+                    }
+                }
+            })
+        );
+        
         context.subscriptions.push({
             dispose: () => {
                 projectDiscovery.dispose();
                 statusBar.dispose();
                 terminalManager.dispose();
+                includeProvider.dispose();
             }
         });
 

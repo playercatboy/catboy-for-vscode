@@ -87,5 +87,13 @@
   
   "catboy.errors.noTargetSelected": "未选择构建目标。请先选择一个构建目标。",
   "catboy.errors.cannotFindWorkspace": "无法找到 {0} 的工作区文件夹",
-  "catboy.errors.yamlPathNotFound": "找不到构建目标 {0} 的 YAML 路径"
+  "catboy.errors.yamlPathNotFound": "找不到构建目标 {0} 的 YAML 路径",
+  
+  "catboy.include.openYamlFile": "打开 YAML 文件",
+  "catboy.include.multipleFiles": "{0} 个文件（点击选择）",
+  "catboy.include.fileNotFound": "文件未找到",
+  "catboy.include.hover.fileNotFound": "**$include**: `{0}`\n\n⚠️ **文件未找到**",
+  "catboy.include.hover.resolvedFiles": "**$include**: `{0}`\n\n**已解析的文件:**\n{1}\n\n*点击打开文件*",
+  "catboy.include.quickPick.selectFile": "选择要打开的文件",
+  "catboy.include.decoration.goToFiles": "转到包含的文件: {0}"
 }

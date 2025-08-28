@@ -1,0 +1,81 @@
+name: edge-case-test-project
+
+# Edge case testing for CodeLens and i18n functionality
+# Tests various edge cases, malformed paths, and error conditions
+
+targets:
+  # Edge case 1: Empty include path (should be file not found)
+  empty-include:
+    build:
+      type: executable
+      $include: ""
+      sources:
+        c: ["src/empty.c"]
+
+  # Edge case 2: Include with only whitespace (should be file not found) 
+  whitespace-include:
+    build:
+      type: executable
+      $include: "   "
+      sources:
+        c: ["src/whitespace.c"]
+
+  # Edge case 3: Deeply nested path (single file)
+  deep-nested:
+    build:
+      type: executable
+      $include: configs/nested/deep/single-config.yaml
+      sources:
+        c: ["src/nested.c"]
+
+  # Edge case 4: Glob with no matches (should be file not found)
+  no-match-glob:
+    build:
+      type: executable
+      $include: configs/nomatch-*.yaml
+      sources:
+        c: ["src/nomatch.c"]
+
+  # Edge case 5: Very large number of matches (100+ files)
+  many-matches:
+    build:
+      type: executable
+      $include: configs/generated-*.yaml
+      sources:
+        c: ["src/many.c"]
+
+  # Edge case 6: Special characters in filenames
+  special-chars:
+    build:
+      type: executable
+      $include: "configs/file-with-special-chars_@#$.yaml"
+      sources:
+        c: ["src/special.c"]
+
+  # Edge case 7: Relative path traversal (..)
+  relative-paths:
+    build:
+      type: executable
+      $include: ../edge-case-test-project/configs/relative.yaml
+      sources:
+        c: ["src/relative.c"]
+
+  # Edge case 8: Mixed valid and invalid includes in array
+  mixed-includes:
+    build:
+      type: executable
+      $include: ["configs/valid1.yaml", "configs/nonexistent.yaml", "configs/valid2.yaml"]
+      sources:
+        c: ["src/mixed.c"]
+
+# Edge case 9: Multiple includes on same line (unusual formatting)
+compact-target:
+  build: { type: executable, $include: configs/compact.yaml, sources: { c: ["src/compact.c"] } }
+
+# Edge case 10: Unicode characters in include path
+unicode-test:
+  build:
+    type: executable
+    $include: configs/测试文件.yaml
+    sources:
+      c: ["src/unicode.c"]

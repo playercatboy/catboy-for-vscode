@@ -1,0 +1,4 @@
+# First valid file for mixed includes test
+defines: ["VALID1=1"]
+flags:
+  c: ["-Wall", "-O1"]

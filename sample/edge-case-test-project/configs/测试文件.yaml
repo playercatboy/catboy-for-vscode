@@ -1,0 +1,5 @@
+# Configuration file with Unicode filename (测试文件 = test file)
+defines: ["UNICODE_FILENAME=1", "测试=1"]
+flags:
+  c: ["-Wall", "-DUNICODE_TEST"]
+# Note: This tests Unicode filename support in the include system

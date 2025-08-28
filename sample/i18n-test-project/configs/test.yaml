@@ -1,0 +1,5 @@
+# Test configuration for specific multi-test
+defines: ["TEST_MODE=1"]
+flags:
+  c: ["-g", "-Wall", "--coverage"]
+links: ["gcov"]

@@ -1,0 +1,5 @@
+# Configuration for testing quoted single file paths
+includes: ["../include"]
+defines: ["QUOTED_PATH=1"]
+flags:
+  c: ["-Wall"]
