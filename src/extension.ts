@@ -18,6 +18,9 @@ export function activate(context: vscode.ExtensionContext) {
         const statusBar = new CatboyStatusBar();
         const terminalManager = new TerminalManager();
         
+        // Set up the refresh callback for the project discovery file watcher
+        projectDiscovery.setRefreshCallback(() => treeDataProvider.refresh());
+        
         console.log('Creating tree view...');
         const treeView = vscode.window.createTreeView('catboyProjects', {
             treeDataProvider: treeDataProvider,
@@ -35,13 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
 
         console.log('Registering commands...');
         registerCommands(context, treeDataProvider, projectDiscovery, statusBar, terminalManager);
-
-        console.log('Setting up file watcher...');
-        const fileWatcher = vscode.workspace.createFileSystemWatcher('**/build.yaml', false, false, false);
-        fileWatcher.onDidCreate(() => treeDataProvider.refresh());
-        fileWatcher.onDidChange(() => treeDataProvider.refresh());
-        fileWatcher.onDidDelete(() => treeDataProvider.refresh());
-        context.subscriptions.push(fileWatcher);
 
         const workspaceFolderDisposable = vscode.workspace.onDidChangeWorkspaceFolders(() => {
             treeDataProvider.refresh();

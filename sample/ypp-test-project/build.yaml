@@ -1,0 +1,26 @@
+name: ypp-demo-project
+
+# Define targets demonstrating different YPP include patterns
+targets:
+  # Pattern 1: Full target with NO $include directive
+  simple-app:
+    build:
+      type: executable
+      includes: ["include/"]
+      defines: ["SIMPLE_BUILD=1"]
+      flags:
+        c: ["-O2", "-Wall"]
+      sources:
+        c: ["src/main.c", "src/utils.c"]
+      links: ["m"]
+
+  # Pattern 2: Target defined here, but its BUILD CONTENT is included from another file
+  complex-app:
+    build:
+      type: executable
+      $include: targets/complex-app-build.yaml
+      sources:
+        c: ["src/main.c", "src/utils.c", "src/math_utils.c"]
+  
+  # Pattern 3: The WHOLE TARGET is included from another file
+  $include: targets/library-targets.yaml

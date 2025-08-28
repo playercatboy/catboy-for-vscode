@@ -1,0 +1,37 @@
+# This file contains complete target definitions that get included into the targets: section
+# These are whole targets, not just build configurations
+
+# Static math library
+math-lib:
+  build:
+    type: static_library
+    includes: ["include/"]
+    defines: ["MATH_LIB_VERSION=2.0", "LIBRARY_BUILD=1"]
+    flags:
+      c: ["-O3", "-Wall", "-fPIC"]
+    sources:
+      c: ["src/math_utils.c"]
+
+# Unit test suite
+unit-tests:
+  build:
+    type: executable
+    includes: ["include/", "test/"]
+    defines: ["TESTING=1", "DEBUG=1"]
+    flags:
+      c: ["-g", "-O0", "-Wall", "--coverage"]
+    sources:
+      c: ["src/test_main.c", "src/utils.c", "src/math_utils.c"]
+    links: ["m", "gcov"]
+
+# Shared library version  
+math-shared:
+  build:
+    type: shared_library
+    includes: ["include/"]
+    defines: ["MATH_LIB_VERSION=2.0", "SHARED_BUILD=1"]
+    flags:
+      c: ["-O3", "-Wall", "-fPIC", "-shared"]
+    sources:
+      c: ["src/math_utils.c"]
+    links: ["m"]

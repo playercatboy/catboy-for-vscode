@@ -1,0 +1,6 @@
+# Release configuration settings
+includes: ["include/"]
+defines: ["NDEBUG=1", "RELEASE=1"]
+flags:
+  c: ["-O3", "-Wall", "-DNDEBUG"]
+links: ["m", "pthread"]

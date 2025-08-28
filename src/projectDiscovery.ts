@@ -9,6 +9,8 @@ export interface CatboyTarget {
     projectName: string;
     yamlPath: string;
     targetType?: string; // exe, dll, sll, obj, luna, etc.
+    originalFilePath?: string; // Original file path from flattened.json
+    originalLineNumber?: number; // Original line number from flattened.json
 }
 
 export interface CatboyBuildFile {
@@ -28,13 +30,103 @@ export interface ParseError {
     message: string;
 }
 
+export interface YppTarget {
+    name: string;
+    type: string;
+    file_path: string;
+    line_number: number;
+}
+
+export interface YppMetadata {
+    version: string;
+    targets: YppTarget[];
+}
+
 export class ProjectDiscovery {
     private projects: Map<string, CatboyProject> = new Map();
     private parseErrors: ParseError[] = [];
     private outputChannel: vscode.OutputChannel;
+    private fileWatcher: vscode.FileSystemWatcher | undefined;
+    private refreshCallback: (() => void) | undefined;
 
     constructor() {
         this.outputChannel = vscode.window.createOutputChannel(localize('catboy.output.channel.name', 'Catboy'));
+        this.setupFileWatcher();
+    }
+
+    setRefreshCallback(callback: () => void) {
+        this.refreshCallback = callback;
+    }
+
+    private setupFileWatcher() {
+        // Watch for changes to build.yaml files
+        this.fileWatcher = vscode.workspace.createFileSystemWatcher('**/build.yaml');
+        
+        this.fileWatcher.onDidChange(async (uri) => {
+            this.outputChannel.appendLine(`Build file changed: ${vscode.workspace.asRelativePath(uri.fsPath)}`);
+            await this.processYppForFile(uri.fsPath);
+            if (this.refreshCallback) {
+                this.refreshCallback();
+            }
+        });
+        
+        this.fileWatcher.onDidCreate(async (uri) => {
+            this.outputChannel.appendLine(`New build file created: ${vscode.workspace.asRelativePath(uri.fsPath)}`);
+            await this.processYppForFile(uri.fsPath);
+            if (this.refreshCallback) {
+                this.refreshCallback();
+            }
+        });
+        
+        this.fileWatcher.onDidDelete((uri) => {
+            this.outputChannel.appendLine(`Build file deleted: ${vscode.workspace.asRelativePath(uri.fsPath)}`);
+            if (this.refreshCallback) {
+                this.refreshCallback();
+            }
+        });
+    }
+
+    private async processYppForFile(yamlPath: string): Promise<void> {
+        try {
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(yamlPath));
+            if (!workspaceFolder) {
+                return;
+            }
+
+            // Get catboy executable path from configuration
+            const config = vscode.workspace.getConfiguration('catboy');
+            const catboyPath = config.get<string>('executablePath') || 'catboy';
+
+            // Change to the directory containing the build.yaml file
+            const yamlDir = path.dirname(yamlPath);
+            const yamlFileName = path.basename(yamlPath);
+
+            this.outputChannel.appendLine(`Running YPP for ${vscode.workspace.asRelativePath(yamlPath)}...`);
+
+            // Execute catboy ypp command
+            const { exec } = require('child_process');
+            const command = `cd "${yamlDir}" && ${catboyPath} ypp -f "${yamlFileName}"`;
+
+            await new Promise<void>((resolve, reject) => {
+                exec(command, (error: any, stdout: string, stderr: string) => {
+                    if (error) {
+                        this.outputChannel.appendLine(`YPP command failed: ${error.message}`);
+                        if (stderr) {
+                            this.outputChannel.appendLine(`stderr: ${stderr}`);
+                        }
+                        resolve(); // Don't reject, just continue with fallback parsing
+                        return;
+                    }
+                    
+                    if (stdout) {
+                        this.outputChannel.appendLine(`YPP output: ${stdout}`);
+                    }
+                    resolve();
+                });
+            });
+        } catch (error) {
+            this.outputChannel.appendLine(`Error processing YPP for ${yamlPath}: ${error instanceof Error ? error.message : String(error)}`);
+        }
     }
 
     async discoverProjects(): Promise<CatboyProject[]> {
@@ -88,6 +180,12 @@ export class ProjectDiscovery {
 
         this.outputChannel.appendLine(`  Scanning ${path.basename(folderPath)}: found ${files.length} build.yaml file(s)`);
 
+        // First, process YPP for all build.yaml files
+        for (const file of files) {
+            await this.processYppForFile(file.fsPath);
+        }
+
+        // Then parse using the flattened data or fallback to direct parsing
         for (const file of files) {
             await this.parseBuildYaml(file.fsPath);
         }
@@ -105,22 +203,42 @@ export class ProjectDiscovery {
                 return;
             }
 
-            const content = fs.readFileSync(yamlPath, 'utf8');
-            
-            if (!content.trim()) {
-                this.parseErrors.push({
-                    file: relativePath,
-                    message: 'File is empty'
-                });
-                return;
-            }
+            // First, try to use YPP flattened.json if it exists
+            const yamlDir = path.dirname(yamlPath);
+            const flattenedJsonPath = path.join(yamlDir, 'build', 'flattened.json');
+            const flattenedYamlPath = path.join(yamlDir, 'build', 'flattened.yaml');
 
-            const parsed = parseSimpleYaml(content);
+            if (fs.existsSync(flattenedJsonPath) && fs.existsSync(flattenedYamlPath)) {
+                await this.parseUsingYppData(yamlPath, flattenedJsonPath, flattenedYamlPath);
+            } else {
+                await this.parseDirectly(yamlPath);
+            }
+            
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.parseErrors.push({
+                file: relativePath,
+                message: `Parse error: ${errorMessage}`
+            });
+        }
+    }
+
+    private async parseUsingYppData(yamlPath: string, flattenedJsonPath: string, flattenedYamlPath: string): Promise<void> {
+        const relativePath = vscode.workspace.asRelativePath(yamlPath);
+        
+        try {
+            // Read and parse the flattened JSON metadata
+            const jsonContent = fs.readFileSync(flattenedJsonPath, 'utf8');
+            const yppData: YppMetadata = JSON.parse(jsonContent);
+
+            // Read and parse the flattened YAML to get the project name
+            const yamlContent = fs.readFileSync(flattenedYamlPath, 'utf8');
+            const parsed = parseSimpleYaml(yamlContent);
 
             if (!parsed || typeof parsed !== 'object') {
                 this.parseErrors.push({
                     file: relativePath,
-                    message: 'Invalid YAML structure - expected an object'
+                    message: 'Invalid flattened YAML structure - expected an object'
                 });
                 return;
             }
@@ -129,7 +247,7 @@ export class ProjectDiscovery {
             if (!projectName || typeof projectName !== 'string') {
                 this.parseErrors.push({
                     file: relativePath,
-                    message: 'Missing or invalid "name" property - must be a string'
+                    message: 'Missing or invalid "name" property in flattened YAML'
                 });
                 return;
             }
@@ -155,68 +273,146 @@ export class ProjectDiscovery {
                 project.buildFiles.push(buildFile);
             }
 
-            if (parsed.targets && typeof parsed.targets === 'object') {
-                for (const targetName of Object.keys(parsed.targets)) {
-                    // Check if this project+target combination already exists
-                    const existingTarget = project.targets.find(t => t.name === targetName);
-                    
-                    if (existingTarget) {
-                        // Only report error if it's from a different YAML file
-                        if (existingTarget.yamlPath !== yamlPath) {
-                            this.parseErrors.push({
-                                file: relativePath,
-                                message: `Duplicate target "${targetName}" in project "${projectName}" (also defined in ${vscode.workspace.asRelativePath(existingTarget.yamlPath)})`
-                            });
-                        }
-                        // Skip adding duplicate (whether from same or different file)
-                        continue;
-                    }
-
-                    // Extract target type from targets/<targetName>/build/type
-                    let targetType: string | undefined;
-                    const targetConfig = parsed.targets[targetName];
-                    if (targetConfig && typeof targetConfig === 'object') {
-                        const buildConfig = targetConfig.build;
-                        if (buildConfig && typeof buildConfig === 'object') {
-                            targetType = buildConfig.type;
-                        }
-                    }
-                    
-                    // Create target
-                    const target: CatboyTarget = {
-                        name: targetName,
-                        projectName: projectName,
-                        yamlPath: yamlPath,
-                        targetType: targetType
-                    };
-                    
-                    // Add to both project targets (for compatibility) and build file targets
-                    project.targets.push(target);
-                    buildFile.targets.push(target);
+            // Process targets from the flattened.json metadata
+            for (const yppTarget of yppData.targets) {
+                // Check if this project+target combination already exists
+                const existingTarget = project.targets.find(t => t.name === yppTarget.name);
+                
+                if (existingTarget) {
+                    // Skip duplicate target
+                    continue;
                 }
-
-                if (Object.keys(parsed.targets).length === 0) {
-                    this.parseErrors.push({
-                        file: relativePath,
-                        message: 'No targets defined in "targets" section'
-                    });
-                }
-            } else {
-                this.parseErrors.push({
-                    file: relativePath,
-                    message: 'Missing or invalid "targets" section'
-                });
+                
+                // Create target with YPP metadata
+                const target: CatboyTarget = {
+                    name: yppTarget.name,
+                    projectName: projectName,
+                    yamlPath: yamlPath,
+                    targetType: yppTarget.type,
+                    originalFilePath: yppTarget.file_path,
+                    originalLineNumber: yppTarget.line_number
+                };
+                
+                // Add to both project targets (for compatibility) and build file targets
+                project.targets.push(target);
+                buildFile.targets.push(target);
             }
 
-            this.outputChannel.appendLine(`    ✓ ${relativePath}: project "${projectName}" with ${parsed.targets ? Object.keys(parsed.targets).length : 0} target(s)`);
+            this.outputChannel.appendLine(`    ✓ ${relativePath}: project "${projectName}" with ${yppData.targets.length} target(s) (using YPP)`);
             
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.outputChannel.appendLine(`Failed to parse YPP data for ${relativePath}, falling back to direct parsing: ${error}`);
+            await this.parseDirectly(yamlPath);
+        }
+    }
+
+    private async parseDirectly(yamlPath: string): Promise<void> {
+        const relativePath = vscode.workspace.asRelativePath(yamlPath);
+        
+        const content = fs.readFileSync(yamlPath, 'utf8');
+        
+        if (!content.trim()) {
             this.parseErrors.push({
                 file: relativePath,
-                message: `Parse error: ${errorMessage}`
+                message: 'File is empty'
+            });
+            return;
+        }
+
+        const parsed = parseSimpleYaml(content);
+
+        if (!parsed || typeof parsed !== 'object') {
+            this.parseErrors.push({
+                file: relativePath,
+                message: 'Invalid YAML structure - expected an object'
+            });
+            return;
+        }
+
+        const projectName = parsed.name;
+        if (!projectName || typeof projectName !== 'string') {
+            this.parseErrors.push({
+                file: relativePath,
+                message: 'Missing or invalid "name" property - must be a string'
+            });
+            return;
+        }
+
+        if (!this.projects.has(projectName)) {
+            this.projects.set(projectName, {
+                name: projectName,
+                buildFiles: [],
+                targets: []
             });
         }
+
+        const project = this.projects.get(projectName)!;
+        
+        // Create or get build file entry for this YAML path
+        let buildFile = project.buildFiles.find(bf => bf.yamlPath === yamlPath);
+        if (!buildFile) {
+            buildFile = {
+                yamlPath: yamlPath,
+                projectName: projectName,
+                targets: []
+            };
+            project.buildFiles.push(buildFile);
+        }
+
+        if (parsed.targets && typeof parsed.targets === 'object') {
+            for (const targetName of Object.keys(parsed.targets)) {
+                // Check if this project+target combination already exists
+                const existingTarget = project.targets.find(t => t.name === targetName);
+                
+                if (existingTarget) {
+                    // Only report error if it's from a different YAML file
+                    if (existingTarget.yamlPath !== yamlPath) {
+                        this.parseErrors.push({
+                            file: relativePath,
+                            message: `Duplicate target "${targetName}" in project "${projectName}" (also defined in ${vscode.workspace.asRelativePath(existingTarget.yamlPath)})`
+                        });
+                    }
+                    // Skip adding duplicate (whether from same or different file)
+                    continue;
+                }
+
+                // Extract target type from targets/<targetName>/build/type
+                let targetType: string | undefined;
+                const targetConfig = parsed.targets[targetName];
+                if (targetConfig && typeof targetConfig === 'object') {
+                    const buildConfig = targetConfig.build;
+                    if (buildConfig && typeof buildConfig === 'object') {
+                        targetType = buildConfig.type;
+                    }
+                }
+                
+                // Create target
+                const target: CatboyTarget = {
+                    name: targetName,
+                    projectName: projectName,
+                    yamlPath: yamlPath,
+                    targetType: targetType
+                };
+                
+                // Add to both project targets (for compatibility) and build file targets
+                project.targets.push(target);
+                buildFile.targets.push(target);
+            }
+
+            if (Object.keys(parsed.targets).length === 0) {
+                this.parseErrors.push({
+                    file: relativePath,
+                    message: 'No targets defined in "targets" section'
+                });
+            }
+        } else {
+            this.parseErrors.push({
+                file: relativePath,
+                message: 'Missing or invalid "targets" section'
+            });
+        }
+
+        this.outputChannel.appendLine(`    ✓ ${relativePath}: project "${projectName}" with ${parsed.targets ? Object.keys(parsed.targets).length : 0} target(s) (direct)`);
     }
 
     private reportErrors(): void {
@@ -257,5 +453,8 @@ export class ProjectDiscovery {
 
     dispose(): void {
         this.outputChannel.dispose();
+        if (this.fileWatcher) {
+            this.fileWatcher.dispose();
+        }
     }
 }

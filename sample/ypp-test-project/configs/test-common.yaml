@@ -1,0 +1,6 @@
+# Test configuration settings  
+includes: ["include/", "test/"]
+defines: ["TESTING=1", "DEBUG=1"]
+flags:
+  c: ["-g", "-O0", "-Wall", "-Wextra", "--coverage"]
+links: ["m", "pthread", "gcov"]

@@ -21,7 +21,7 @@ function getIconNameForTargetType(targetType?: string): string {
         case 'sll':
         case 'static_library':
         case 'static_linked_library':
-            return 'archive'; // Archive/box icon for static libraries
+            return 'file-zip'; // Archive icon for static libraries (matches treeDataProvider)
         case 'obj':
         case 'object_files':
             return 'file-binary'; // Binary file icon for object files
@@ -189,51 +189,78 @@ export function registerCommands(
                 const document = await vscode.workspace.openTextDocument(item.buildFile.yamlPath);
                 await vscode.window.showTextDocument(document);
             } else if (item instanceof TargetItem) {
-                // Open the YAML file and highlight the target definition line
-                const document = await vscode.workspace.openTextDocument(item.target.yamlPath);
-                const editor = await vscode.window.showTextDocument(document);
-                
-                // Find the target definition line
-                const targetName = item.target.name;
-                const text = document.getText();
-                const lines = text.split('\n');
-                
-                // Look for the specific target definition line (e.g., "  target-name:" under targets section)
-                let targetLineIndex = -1;
-                let inTargetsSection = false;
-                
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
-                    const trimmedLine = line.trim();
-                    
-                    // Check if we're entering the targets section
-                    if (trimmedLine === 'targets:') {
-                        inTargetsSection = true;
-                        continue;
+                // If we have original file path and line number from YPP, use those
+                if (item.target.originalFilePath && item.target.originalLineNumber) {
+                    try {
+                        const document = await vscode.workspace.openTextDocument(item.target.originalFilePath);
+                        const editor = await vscode.window.showTextDocument(document);
+                        
+                        // Navigate to the original line number (convert from 1-based to 0-based)
+                        const lineIndex = item.target.originalLineNumber - 1;
+                        if (lineIndex >= 0 && lineIndex < document.lineCount) {
+                            const position = new vscode.Position(lineIndex, 0);
+                            const line = document.lineAt(lineIndex);
+                            const range = new vscode.Range(position, position.with(undefined, line.text.length));
+                            editor.selection = new vscode.Selection(range.start, range.end);
+                            editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+                        }
+                    } catch (error) {
+                        // Fall back to main build.yaml if original file doesn't exist
+                        vscode.window.showWarningMessage(`Could not open original file ${item.target.originalFilePath}, opening main build.yaml instead`);
+                        await openMainBuildYaml(item);
                     }
-                    
-                    // If we're in targets section and find our specific target
-                    if (inTargetsSection && trimmedLine === `${targetName}:`) {
-                        targetLineIndex = i;
-                        break;
-                    }
-                    
-                    // If we hit another top-level section (no indentation), exit targets
-                    if (inTargetsSection && trimmedLine && !line.startsWith(' ') && !line.startsWith('\t') && trimmedLine.includes(':') && trimmedLine !== 'targets:') {
-                        inTargetsSection = false;
-                    }
-                }
-                
-                // Highlight the target line if found
-                if (targetLineIndex >= 0) {
-                    const position = new vscode.Position(targetLineIndex, 0);
-                    const range = new vscode.Range(position, position.with(undefined, lines[targetLineIndex].length));
-                    editor.selection = new vscode.Selection(range.start, range.end);
-                    editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+                } else {
+                    // Fallback to the old behavior
+                    await openMainBuildYaml(item);
                 }
             }
         })
     );
+
+    async function openMainBuildYaml(item: TargetItem): Promise<void> {
+        // Open the YAML file and highlight the target definition line
+        const document = await vscode.workspace.openTextDocument(item.target.yamlPath);
+        const editor = await vscode.window.showTextDocument(document);
+        
+        // Find the target definition line
+        const targetName = item.target.name;
+        const text = document.getText();
+        const lines = text.split('\n');
+        
+        // Look for the specific target definition line (e.g., "  target-name:" under targets section)
+        let targetLineIndex = -1;
+        let inTargetsSection = false;
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const trimmedLine = line.trim();
+            
+            // Check if we're entering the targets section
+            if (trimmedLine === 'targets:') {
+                inTargetsSection = true;
+                continue;
+            }
+            
+            // If we're in targets section and find our specific target
+            if (inTargetsSection && trimmedLine === `${targetName}:`) {
+                targetLineIndex = i;
+                break;
+            }
+            
+            // If we hit another top-level section (no indentation), exit targets
+            if (inTargetsSection && trimmedLine && !line.startsWith(' ') && !line.startsWith('\t') && trimmedLine.includes(':') && trimmedLine !== 'targets:') {
+                inTargetsSection = false;
+            }
+        }
+        
+        // Highlight the target line if found
+        if (targetLineIndex >= 0) {
+            const position = new vscode.Position(targetLineIndex, 0);
+            const range = new vscode.Range(position, position.with(undefined, lines[targetLineIndex].length));
+            editor.selection = new vscode.Selection(range.start, range.end);
+            editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+        }
+    }
 
     // Register set current target command for double-click functionality
     context.subscriptions.push(

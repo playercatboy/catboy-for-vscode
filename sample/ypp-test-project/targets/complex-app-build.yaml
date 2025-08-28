@@ -1,0 +1,13 @@
+# This file contains the build configuration content for complex-app target
+# It gets included into the build: section of the complex-app target
+
+includes: ["include/", "external/include/"]
+defines: 
+  - "COMPLEX_BUILD=1"
+  - "DEBUG=1" 
+  - "FEATURE_ADVANCED_MATH=1"
+flags:
+  c: ["-g", "-O2", "-Wall", "-Wextra", "-std=c99"]
+  cxx: ["-g", "-O2", "-Wall", "-Wextra", "-std=c++17"]
+links: ["m", "pthread", "dl"]
+pkg_config: ["openssl", "zlib"]
