@@ -6,6 +6,7 @@ A Visual Studio Code extension that provides build system integration for the Ca
 
 - **Project Discovery**: Automatically discovers Catboy projects in your workspace by scanning for `build.yaml` files
 - **YAML Pre-processor (YPP) Support**: Full integration with Catboy's YPP module for split YAML configurations using `$include` directives
+- **Interactive CodeLens for $include**: Clickable links above include directives with full internationalization support
 - **Tree View Interface**: Displays all projects and their targets in a hierarchical tree view
 - **Enhanced Navigation**: Go-to-file functionality navigates to original YAML files where targets were defined, even in split configurations
 - **Build Actions**: Quick access buttons for build, clean, and rebuild operations
@@ -15,6 +16,7 @@ A Visual Studio Code extension that provides build system integration for the Ca
 - **Command Palette**: Quick target selection and output viewing via command palette
 - **Smart Terminal Management**: Reuses terminals per target for better organization
 - **Automatic YPP Processing**: Intelligently processes YPP when YAML files change, with graceful fallback
+- **Multilingual Support**: Complete English and Simplified Chinese translations with runtime language switching
 
 ## Requirements
 
@@ -90,6 +92,22 @@ targets:
 
 The extension automatically runs `catboy ypp` to process includes and uses the generated metadata for precise navigation to original source files.
 
+### Interactive CodeLens for $include Directives
+
+The extension provides interactive CodeLens features for `$include` directives in YAML files:
+
+- **Clickable Links**: Links appear above each `$include` line (similar to Git merge editor)
+- **Smart Resolution**: Single files open directly; multiple files show selection menu
+- **Visual Feedback**: File paths have underline decorations and hover tooltips
+- **F12 Navigation**: Use "Go to Definition" (F12) on include paths for quick navigation
+- **Error Handling**: Missing files display "⚠️ File not found" with appropriate styling
+- **Multilingual**: All text adapts to your language setting (English/中文简体)
+
+Example CodeLens display:
+- Single file: "📄 Open YAML File" / "📄 打开 YAML 文件"
+- Multiple files: "📁 3 files (click to choose)" / "📁 3 个文件（点击选择）"
+- Missing file: "⚠️ File not found" / "⚠️ 文件未找到"
+
 ### Available Actions
 
 Each target in the tree view provides three action buttons:
@@ -119,6 +137,15 @@ This extension contributes the following settings:
 None currently known. Please report any issues on the GitHub repository.
 
 ## Release Notes
+
+### 0.2.1
+
+Interactive CodeLens with comprehensive internationalization:
+- **CodeLens for $include**: Clickable links above include directives with smart file resolution and error handling
+- **Full Internationalization**: Complete Simplified Chinese support for all CodeLens text and interactive elements
+- **Interactive Features**: Hover tooltips, F12 navigation, underline decorations, and multi-file selection menus
+- **Comprehensive Testing**: Two complete test projects (i18n-test-project, edge-case-test-project) with detailed validation instructions
+- **Advanced Path Resolution**: Support for glob patterns, Unicode filenames, special characters, and complex directory structures
 
 ### 0.2.0
 

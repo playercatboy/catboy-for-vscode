@@ -2,6 +2,42 @@
 
 All notable changes to the "Catboy for Visual Studio Code" extension will be documented in this file.
 
+## [0.2.1] - 2025-08-28
+
+### Added
+- **Comprehensive CodeLens Internationalization**: Full Simplified Chinese (zh-hans) translation support for all CodeLens features
+  - CodeLens text: "📄 Open YAML File" / "📄 打开 YAML 文件" for single file includes
+  - CodeLens text: "📁 X files (click to choose)" / "📁 X 个文件（点击选择）" for multiple file includes
+  - CodeLens text: "⚠️ File not found" / "⚠️ 文件未找到" for missing file includes
+  - Hover tooltips with complete translation support for resolved and unresolved includes
+  - Quick pick menu placeholder text: "Select file to open" / "选择要打开的文件"
+- **Interactive Editor Features for $include Directives**: Complete CodeLens provider implementation
+  - Clickable links above `$include` lines (similar to Git merge editor)
+  - Underline decorations under include file paths with link styling  
+  - Hover providers with rich file resolution information
+  - F12 "Go to Definition" navigation support for include paths
+  - Multi-file selection via quick pick menu when multiple files match glob patterns
+- **Comprehensive Test Projects**: Two complete test projects for thorough validation
+  - `i18n-test-project`: Basic functionality testing with 9 scenarios covering all CodeLens states
+  - `edge-case-test-project`: Advanced edge case testing with 10+ scenarios including Unicode, special characters, and error conditions
+  - Complete testing documentation with step-by-step validation instructions
+
+### Enhanced
+- **Smart Path Resolution**: Advanced glob pattern support using VS Code's native workspace API
+  - Single file includes open directly when clicked
+  - Multiple file matches show count and provide quick pick selection
+  - Graceful handling of missing files, empty paths, and malformed patterns
+- **Language Integration**: Seamless integration with existing Catboy language system
+  - Automatic language detection from Catboy extension settings
+  - Runtime language switching support without extension reload
+  - Consistent translation keys across all user-facing text
+
+### Technical
+- **Zero External Dependencies**: Complete implementation using VS Code's built-in APIs only
+- **Performance Optimized**: Efficient regex-based parsing with asynchronous file resolution
+- **Robust Error Handling**: Comprehensive edge case handling for all path formats and error conditions
+- **TypeScript Implementation**: Full type safety with proper interfaces for all CodeLens interactions
+
 ## [0.2.0] - 2025-08-28
 
 ### Added

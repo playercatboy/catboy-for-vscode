@@ -48,6 +48,7 @@ npm run lint
 
 3. **UI Components**:
    - **Activity Bar Icon**: Custom "Catboy" icon in the VSCode activity bar
+   - **Interactive CodeLens**: Clickable links above `$include` directives with full internationalization
    - **Tree View Provider**: Displays hierarchical view of projects and targets
    - **Action Buttons**: Build, Clean, and Rebuild buttons for each target
    - **Status Bar**: Shows current selected target and build progress
@@ -71,7 +72,7 @@ npm run lint
 
 ### Key Implementation Areas
 
-- **src/extension.ts**: Extension entry point and activation logic
+- **src/extension.ts**: Extension entry point and activation logic with CodeLens provider registration
 - **src/treeDataProvider.ts**: Tree view implementation for project/target display
 - **src/projectDiscovery.ts**: Logic for finding and parsing build.yaml files with comprehensive error handling and YPP integration
 - **src/commands.ts**: Command handlers for build/clean/rebuild operations with status integration and configurable verbose flag
@@ -79,6 +80,7 @@ npm run lint
 - **src/terminalManager.ts**: Smart terminal management with reuse per target
 - **src/yamlParser.ts**: Custom lightweight YAML parser for build.yaml files (zero dependencies)
 - **src/languageManager.ts**: Custom internationalization system with runtime language switching and placeholder replacement
+- **src/includeProvider.ts**: CodeLens, hover, and definition providers for `$include` directives with full i18n support
 
 ### Extension Configuration
 
@@ -159,6 +161,7 @@ Run `npm test` for the complete test suite.
 ✅ **Complete Implementation** - All core features and enhancements have been implemented and tested.
 
 ### Version History
+- **v0.2.1**: Interactive CodeLens for `$include` directives with comprehensive internationalization support
 - **v0.2.0**: Complete YPP (YAML Pre-processor) integration for split YAML configurations with enhanced go-to-file navigation
 - **v0.1.10**: Added comprehensive Simplified Chinese (zh-hans) internationalization support and configurable verbose build setting
 - **v0.1.9**: Enhanced target selection with friendly type names and current target indicators

@@ -2,7 +2,7 @@
   "name": "catboy-for-vscode",
   "displayName": "%catboy.extension.name%",
   "description": "%catboy.extension.description%",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "playercatboy",
   "engines": {
     "vscode": "^1.74.0"
